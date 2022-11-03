@@ -9,9 +9,9 @@ exclude_rules = L031
 
 [sqlfluff:templater:dbt]
 # pass in our dbt project/cred details
-#project_dir = dbt_
-#profiles_dir = dbt_/profiles
-#profile = cert
+project_dir =
+profiles_dir =
+profile =
 
 [sqlfluff:templater:jinja]
 apply_dbt_builtins = True
