@@ -1,0 +1,3 @@
+SELECT *
+FROM {% raw %}{{{% endraw %} source('{{ source_name }}', '{{ src_tbl_name }}') {% raw %}}}{% endraw %}
+LIMIT 5

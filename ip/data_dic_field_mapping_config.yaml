@@ -1,0 +1,14 @@
+---
+data_dictionary: ip/data_src_a_data_dictionary.xlsx # Name of the input data dictionary file to be used to retrive data source metadata. This metadata is then used to capture field-level DQ tests & descriptions
+target_op_src_filename: _{data_src}_source.yml # name of the target dbt source file
+field_name_mappings: # params used by the the dbt source.yml generator script (py/gen_source_properties.py) to map the fields required to generate the dbt source properties file.
+  data_dic_col_name_field: field
+  data_dic_descrip_field: description
+  data_dic_primary_key_field: primary_key # PK field indicator in data dic
+  data_dic_created_at_field: created_at_field # PK field indicator in data dic
+  data_dic_updated_at_field: updated_at_field # PK field indicator in data dic
+  data_dic_unique_field: unique
+  data_dic_not_null_field: not_null
+  data_dic_accepted_values_field: accepted_values
+  data_dic_fk_constraint_table_field: fk_constraint_table # foreign key relationship table in data dic
+  data_dic_fk_constraint_key_field: fk_constraint_key # foreign key ID field in data dic

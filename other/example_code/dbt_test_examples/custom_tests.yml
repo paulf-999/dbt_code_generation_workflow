@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: data_src_a
+    database: data_src_a_dev
+    schema: example
+    tables:
+      - name: example_tbl_a
+        tests:
+        - is_table_empty # my custom test - verify source table isn't empty

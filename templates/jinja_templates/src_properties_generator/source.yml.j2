@@ -1,0 +1,84 @@
+          - name: {{ col_name }}
+            {#- |safe is used to instruct jinja to render description directly #}
+            description: "{{ col_description|safe }}"
+
+            {#- 1. check 'primary_key' combinations #}
+
+            {%- if primary_key != '' %}
+            tests:
+              - unique
+              - not_null
+            {%- if accepted_values != '' %}
+              - accepted_values:
+                  values: {{ accepted_values }}
+            {%- endif -%}
+
+            {%- if fk_constraint_table != '' %}
+              - relationships:
+                  to: ref('{{ fk_constraint_table }}')
+                  field: {{ fk_constraint_key }}
+            {%- endif -%}
+
+            {%- endif -%}
+            {#- close 1. check 'primary_key' combinations #}
+
+            {#- 2. check 'unique' combinations #}
+            {%- if unique != '' and primary_key == '' %}
+            tests:
+              - unique
+            {%- if not_null != '' %}
+              - not_null
+            {%- endif -%}
+            {%- if accepted_values != '' %}
+              - accepted_values:
+                  values: {{ accepted_values }}
+            {%- endif -%}
+            {%- if fk_constraint_table != '' %}
+              - relationships:
+                  to: ref('{{ fk_constraint_table }}')
+                  field: {{ fk_constraint_key }}
+            {%- endif -%}
+
+            {%- endif -%}
+            {#- close 2. check 'unique' combinations #}
+
+            {#- 3. check 'not_null' combinations #}
+            {%- if not_null != '' and primary_key == '' and unique == '' %}
+            tests:
+              - not_null
+            {%- if accepted_values != '' %}
+              - accepted_values:
+                  values: {{ accepted_values }}
+            {%- endif -%}
+            {%- if fk_constraint_table != '' %}
+              - relationships:
+                  to: ref('{{ fk_constraint_table }}')
+                  field: {{ fk_constraint_key }}
+            {%- endif -%}
+
+            {%- endif -%}
+            {#- close 3. check 'not_null' combinations #}
+
+            {#- 4. check 'accepted_values' combinations #}
+            {%- if accepted_values != '' and primary_key == '' and unique == '' and not_null == '' %}
+            tests:
+              - accepted_values:
+                  values: {{ accepted_values }}
+            {%- if fk_constraint_table != '' %}
+              - relationships:
+                  to: ref('{{ fk_constraint_table }}')
+                  field: {{ fk_constraint_key }}
+            {%- endif -%}
+
+            {%- endif -%}
+            {#- close 4. check 'accepted_values' combinations #}
+
+
+            {#- 5. check 'fk_constraint_table' combinations #}
+            {%- if fk_constraint_table != '' and primary_key == '' and unique == '' and not_null == '' and accepted_values == '' %}
+            tests:
+              - relationships:
+                  to: ref('{{ fk_constraint_table }}')
+                  field: {{ fk_constraint_key }}
+            {%- endif -%}
+            {#- close 5. check 'fk_constraint_table' combinations #}

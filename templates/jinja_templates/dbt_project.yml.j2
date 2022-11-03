@@ -1,0 +1,47 @@
+# Name of the dbt project. Must be snake_case, i.e., letters, digits and underscores only, and cannot start with a digit.
+name: '{{ DBT_PROJECT_NAME }}'
+# Recommendation: An organisation often only has one dbt project, so it makes sense to name a project with your organisation's name, in snake_case.
+config-version: 2
+version: '{{ DBT_VERSION }}'
+
+# The profile your dbt project should use to connect to your data warehouse.
+profile: '{{ DBT_PROFILE_NAME }}'
+# Recommendation: An organisation often only has one data warehouse, so it makes sense to use your organisation's name as a profile name, in snake_case.
+
+# Configurations specifying where dbt should look for different types of files.
+# To avoid confusion, the defaults have been used.
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+require-dbt-version: ">={{ DBT_VERSION }}" # as per dbt's recommendation, require users to at least have v1.0.0 of dbt (see: https://docs.getdbt.com/reference/project-configs/require-dbt-version)
+
+# example - grant privilege to newly created tables/views to end-users, where 'reporter' is the name of the RBAC group
+#on-run-end:
+#- "\\ grant_select_on_schemas(schemas, 'reporter') \\"
+
+target-path: "target"  # directory which will store compiled SQL files
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+# The model configurations listed below follow dbt's best practices, described here: https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview
+models:
+  {{ DBT_PROJECT_NAME }}:
+    staging:
+      # Purpose: the staging layer is to create models from raw data.
+      # It's also used to rename and recast fields once. All subsequent data models should be built on top of the staging models, reducing the amount of duplicated code.
+      +materialized: view
+      # Staging models help keep our code DRY and should be materialized as views.
+    intermediate:
+      # Purpose: the intermediate layer is to prepare our staging models to join into the dimensional data model entities we want.
+      +materialized: ephemeral
+        # It's common to materialize intermediate models ephemerally. This ensures the warehouse doesn't get contaminated with tmp_/stg_ type models.
+    marts:
+      # Purpose: the marts layer is used to store the enterprise (dimensional) data model.
+      +materialized: table
+      # To give end users much faster performance we materialise mart models here as tables.
+      # This also saves costs recomputing these entire chains of models each time somebody refreshes a dashboard or runs a regression in python.

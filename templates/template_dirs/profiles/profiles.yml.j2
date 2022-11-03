@@ -1,0 +1,31 @@
+{{ DBT_PROFILE_NAME }}:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: {{ SNOWFLAKE_ACCOUNT }}
+      role: {{ SNOWFLAKE_ROLE }}
+
+      user: {{ SNOWFLAKE_USERNAME }}
+      private_key_path: {{ SNOWFLAKE_PRIVATE_FILE }}
+
+      database: {{ SNOWFLAKE_DB }}
+      warehouse: {{ SNOWFLAKE_WH }}
+      schema: {{ SNOWFLAKE_SCHEMA }}
+      threads: 200
+
+local_{{ DBT_PROFILE_NAME }}:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: {{ SNOWFLAKE_ACCOUNT }}
+      role: {{ SNOWFLAKE_ROLE }}
+
+      user: {{ SNOWFLAKE_USERNAME }}
+      private_key_path: <TODO - KEYPATH_HERE>
+
+      database: {{ SNOWFLAKE_DB }}
+      warehouse: {{ SNOWFLAKE_WH }}
+      schema: {{ SNOWFLAKE_SCHEMA }}
+      threads: 200

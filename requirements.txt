@@ -1,0 +1,7 @@
+j2cli
+jinja2
+jq
+openpyxl
+pandas
+pyyaml
+yq

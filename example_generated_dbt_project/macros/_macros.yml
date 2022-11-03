@@ -1,0 +1,27 @@
+version: 2
+
+macros:
+  - name: generate_schema_name
+    description: >
+      'Override of the standard dbt macro 'generate_schema_name', to prevent dbt from attempting to create new schemas.
+      See: https://docs.getdbt.com/docs/building-a-dbt-project/building-models/using-custom-schemas#advanced-custom-schema-configuration.
+    arguments:
+      - name: custom_schema_name
+        type: 'String'
+        description: >
+          'Name of the (custom) schema you want to use.'
+
+  - name: grant_select_on_schemas
+    description: >
+      'Grant select usage and select for all tables in a schema.'
+    arguments:
+      - name: schemas
+        type: 'dbt Jinja variable'
+        description: >
+          'dbt Jinja variable that is available in an on-run-end hook,
+          representing a list of schemas that dbt built objects in on this run.'
+
+      - name: role
+        type: 'String'
+        description: >
+          'The Snowflake role we want to assign the select permissions to.'

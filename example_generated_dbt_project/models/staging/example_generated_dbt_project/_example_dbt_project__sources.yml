@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: {{ DATA_SRC }}
+    description: ""
+    schema: {{ SNOWFLAKE_SCHEMA }}
+    tables:
+      - name: customers

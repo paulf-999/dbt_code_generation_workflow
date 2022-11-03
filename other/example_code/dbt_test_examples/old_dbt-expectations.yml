@@ -1,0 +1,45 @@
+version: 2
+
+sources:
+  - name:
+    description: "" # can use markdown file here
+
+    database: ""
+    schema: ""
+    tables:
+      - name: ""
+        description: ""
+        columns:
+          - name: ""
+            description: ""
+
+      - name: example
+        description: ""
+        tests:
+          # source table row count
+          - source_rowcount:
+          # table column validation
+          - raw_column_existence:
+          - dbt_expectations.expect_table_columns_to_contain_set:
+              column_list: ["<col list here>"]
+          # similar to the above - but the above is more succinct
+          - dbt_expectations.expect_table_column_count_to_equal:
+          # less of a candidate use
+          - dbt_expectations.expect_table_row_count_to_equal_other_table_times_factor:
+
+        columns:
+          - name: <col name>
+            description: ""
+            tests:
+            # data type testing (great candidate)
+            - dbt_expectations.expect_column_values_to_be_of_type:
+                column_type: VARCHAR
+
+            # string matching
+            - dbt_expectations.expect_column_value_lengths_to_be_between:
+            # other - good candidare use
+            - dbt_expectations.expect_column_min_to_be_between:
+            - dbt_expectations.expect_column_max_to_be_between:
+            # other - less of a candidate use
+            - dbt_expectations.expect_row_values_to_have_recent_data:
+            - dbt_expectations.expect_grouped_row_values_to_have_recent_data:

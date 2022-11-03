@@ -1,0 +1,20 @@
+{{
+    config(
+        schema='{{ db_schema_incremental }}',
+        materialized='{{ db_schema_incremental_data }}',
+        on_schema_change='{{ on_schema_change }}'
+    )
+}}
+
+SELECT *
+FROM {{ ref('{{ src_tbl_name }}_snapshot') }}
+
+{% if is_incremental() %}
+
+-- this filter will only be applied on an incremental run
+    WHERE {{ updated_at }} > (
+        SELECT MAX({{ updated_at }})
+        FROM {{ this }}
+    )
+
+{% endif %}

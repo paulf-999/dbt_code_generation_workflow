@@ -1,0 +1,21 @@
+---
+version: '1'
+
+rules:
+  - name: Non-base staging models must be prefixed with stg_
+    subject:
+      tags:
+        - include: staging
+          exclude: base
+    must:
+      match-name: /stg_.*/
+
+  - name: Dimension models must only depend on staging or intermediate
+    subject:
+      tags:
+        include: dim
+    must:
+      have-parent-relationship:
+        require-tags-any:
+          - staging
+          - intermediate

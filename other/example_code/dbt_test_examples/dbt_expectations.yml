@@ -1,0 +1,32 @@
+version: 2
+
+sources:
+  - name: data_src_a
+    database: data_src_a_dev
+    schema: example
+    tables:
+      - name: example_tbl_a
+        tests:
+        - is_table_empty # my custom test (verify source table isn't empty)
+        - dbt_expectations.expect_table_columns_to_contain_set:
+            column_list: ["column_a", "column_b", "column_c", "column_d", "column_e", "column_f"]
+        - dbt_expectations.expect_table_column_count_to_equal:
+             value: 6
+        columns:
+          - name: column_a
+            description: ""
+            tests:
+              - unique
+              - not_null
+              - dbt_expectations.expect_column_values_to_be_of_type:
+                  column_type: VARCHAR
+          - name: column_b
+            tests:
+            - dbt_expectations.expect_column_min_to_be_between:
+                min_value: 0010000012
+                max_value: 0020000000
+            - dbt_expectations.expect_column_max_to_be_between:
+                min_value: 0010000000
+                max_value: 0052846125
+            - dbt_expectations.expect_column_values_to_match_regex:
+                regex: "[0-9]+"

@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: raw_jaffle_shop
+    description: A replica of the postgres database used to power the jaffle_shop app.
+    schema: example_schema
+    tables:
+      - name: customers
+        tests:
+            - raw_table_existence
