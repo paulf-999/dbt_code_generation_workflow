@@ -46,7 +46,7 @@ It does this by:
   * `generate_schema_name` - commonly revised dbt macro
   * `grant_select_on_schemas` - dbt-recommended macro to grant access to all tables in a schema
 
-#### 2. Generate (dbt) sql files in bulk that use the [`snapshot`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/templates/jinja_templates/snapshot.sql.j2) and [`incremental`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/templates/jinja_templates/incremental.sql.j2) patterns (templates)
+#### 2. Generate (dbt) sql files in bulk that use the [`snapshot`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/templates/jinja_templates/snapshot.sql.j2) and [`incremental`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/templates/jinja_templates/incremental.sql.j2) patterns (templates)
 
 #### 3. Automate the creation of the dbt `_source.yml` resource property file for a given data source
 
@@ -104,15 +104,15 @@ ${DBT_PROJECT_NAME}
 
 ### Prerequisites
 
-Before you run the above commands, ensure you provide values for each of the keys in [`ip/config.yaml`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/ip/config.yaml). For a description breakdown of each of the input args, see [`ip/README.md`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/ip/README.md).
+Before you run the above commands, ensure you provide values for each of the keys in [`ip/config.yaml`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/ip/config.yaml). For a description breakdown of each of the input args, see [`ip/README.md`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/ip/README.md).
 
-In addition, for a breakdown of each of the input args used for the data dictionary field mapping args, see [`ip/data_dic_field_mapping_prereqs.md`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/ip/data_dic_field_mapping_prereqs.md).
+In addition, for a breakdown of each of the input args used for the data dictionary field mapping args, see [`ip/data_dic_field_mapping_prereqs.md`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/ip/data_dic_field_mapping_prereqs.md).
 
 ### Steps
 
-1. Update the input parameters within [`ip/config.yaml`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/ip/config.yaml).
-2. Update the other input parameters within [`ip/data_dic_field_mapping_config.yaml`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/ip/data_dic_field_mapping_config.yaml).
-3. Upload an input data dictionary to the `ip` folder and update the value of the `data dictionary` key within [`ip/data_dic_field_mapping_config.yaml`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/ip/data_dic_field_mapping_config.yaml) accordingly.
+1. Update the input parameters within [`ip/config.yaml`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/ip/config.yaml).
+2. Update the other input parameters within [`ip/data_dic_field_mapping_config.yaml`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/ip/data_dic_field_mapping_config.yaml).
+3. Upload an input data dictionary to the `ip` folder and update the value of the `data dictionary` key within [`ip/data_dic_field_mapping_config.yaml`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/ip/data_dic_field_mapping_config.yaml) accordingly.
 4. Install the prerequisites libraries by running: `make deps`.
 5. Run `make install` to:
 
