@@ -7,7 +7,7 @@ Automation scripts to accelerate dbt development, namely using code generation s
 3. Automate the creation of the dbt `_source.yml` resource property file for a given data source.
 4. Recreate the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview).
 
-Note, re: step 3 - there's also a routine to add new data sources, see 'How to Add a New Data Source if the dbt Project Already Exists'.
+Note, re: step 3 - there's also a routine to add new data sources, see *'How to Add a New Data Source if the dbt Project Already Exists'*.
 
 ---
 
