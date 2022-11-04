@@ -141,4 +141,4 @@ Assuming you have done this, do the following to add a new data source to your d
 
 ## 3. Implementation Details
 
-See [implementation_details.md](implementation_details.md).
+See [docs/implementation_details.md](docs/implementation_details.md).
