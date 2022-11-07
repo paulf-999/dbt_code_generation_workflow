@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS {{ snowflake_src_db }}.{{ db_schema_landed }}.{{ src_tbl_name }} AS SELECT * FROM {{ source_name }}_{{ env }}.SHARED.{{ src_tbl_name }};

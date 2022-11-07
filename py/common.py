@@ -22,7 +22,7 @@ jinja_env_source = Environment(loader=FileSystemLoader(source_template_dir), aut
 def verify_dir_exists(target_dir):
     """create the target dir if it doesn't exist"""
     if not os.path.exists(target_dir):
-        logger.info("target_dir doesn't exist, create it")
+        logger.info(f"Target directory '{target_dir}' doesn't exist, create it.")
         os.makedirs(target_dir)
 
     return

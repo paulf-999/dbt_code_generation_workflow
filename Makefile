@@ -98,14 +98,13 @@ get_ips:
 	$(eval AF2_DAGS_PATH=$(shell yq -r '.general_params.abs_path_to_airflow2_dags | select( . != null )' ${CONFIG_FILE}))
 	$(eval DATA_SRC=$(shell yq -r '.data_src_params.data_src | select( . != null )' ${CONFIG_FILE}))
 	@# db_connection params
-	$(eval SNOWFLAKE_ACCOUNT=$(shell yq -r '.db_connection_params.snowflake_account' ${CONFIG_FILE}))
-	$(eval SNOWFLAKE_USERNAME=$(shell yq -r '.db_connection_params.snowflake_username | select( . != null )' ${CONFIG_FILE}))
+	$(eval SNOWFLAKE_USERNAME=$(shell yq -r '.db_connection_params.sf_username | select( . != null )' ${CONFIG_FILE}))
 	$(eval SNOWFLAKE_PRIVATE_FILE=$(shell yq -r '.db_connection_params.abs_path_to_snowflake_private_key | select( . != null )' ${CONFIG_FILE}))
-	$(eval SNOWFLAKE_WH=$(shell yq -r '.db_connection_params.snowflake_warehouse' ${CONFIG_FILE}))
-	$(eval SNOWFLAKE_ROLE=$(shell yq -r '.db_connection_params.snowflake_role' ${CONFIG_FILE}))
-	$(eval SNOWFLAKE_DB=$(shell yq -r '.db_connection_params.snowflake_data_src_db' ${CONFIG_FILE}))
-	$(eval SNOWFLAKE_DB=$(shell yq -r '.db_connection_params.snowflake_src_db' ${CONFIG_FILE}))
-	$(eval SNOWFLAKE_SCHEMA=$(shell yq -r '.db_connection_params.snowflake_src_db_schema' ${CONFIG_FILE}))
+	$(eval SNOWFLAKE_ACCOUNT=$(shell yq -r '.db_connection_params.sf_account' ${CONFIG_FILE}))
+	$(eval SNOWFLAKE_WH=$(shell yq -r '.db_connection_params.sf_warehouse' ${CONFIG_FILE}))
+	$(eval SNOWFLAKE_ROLE=$(shell yq -r '.db_connection_params.sf_role' ${CONFIG_FILE}))
+	$(eval SNOWFLAKE_DB=$(shell yq -r '.db_connection_params.sf_src_db' ${CONFIG_FILE}))
+	$(eval SNOWFLAKE_SCHEMA=$(shell yq -r '.db_connection_params.sf_src_db_schema' ${CONFIG_FILE}))
 	@# dbt params
 	$(eval DBT_VERSION=$(shell yq -r '.dbt_params.dbt_version' ${CONFIG_FILE}))
 	$(eval DBT_PROFILE_NAME=$(shell yq -r '.dbt_params.dbt_profile_name' ${CONFIG_FILE}))
@@ -177,7 +176,7 @@ validate_src_db_connection: get_ips
 	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'validate_src_db_connection'. Verify connection to the source DB.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "-----------------------------------------------------------------------"
 	@echo
-	cd ${DBT_PROJECT_NAME} && dbt debug --profiles-dir=profiles --profile=local_${DBT_PROFILE_NAME}
+	cd ${DBT_PROJECT_NAME} && dbt debug --profiles-dir=profiles --profile=${DBT_PROFILE_NAME}
 
 install_packages: get_ips
 	@echo "------------------------------------------------------------------"
@@ -249,3 +248,20 @@ copy_dbt_project_to_af_dags_dir: get_ips
 	@chmod -R 777 ${AF2_DAGS_PATH}/dbt/${DBT_PROJECT_NAME}/target
 	# copy the user's RSA key path into the dbt profiles dir
 	@cp ${SNOWFLAKE_PRIVATE_FILE} ${AF2_DAGS_PATH}/dbt/${DBT_PROJECT_NAME}/profiles/
+
+#############################################################################################
+# NON-DBT - Ad-hoc/one off generated scripts (not to be productionised)
+#############################################################################################
+gen_sql_objs_for_restriced_and_landed_layers: get_ips
+	@echo "-------------------------------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'gen_sql_objs_for_restriced_and_landed_layers'. Generate restricted/landed .sql files using Jinja templates.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "-------------------------------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING}# Generate sql for the 'restricted' layer.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "---------------------------------------------------------------"
+	@ rm -rf op/${DATA_SRC}/landed/
+	@ rm -rf op/${DATA_SRC}/restricted/
+	@python3 py/gen_dbt_sql_objs.py restricted
+	@echo "---------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING}# Generate sql for the 'landed' layer.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "---------------------------------------------------------------"
+	@python3 py/gen_dbt_sql_objs.py landed

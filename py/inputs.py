@@ -43,22 +43,36 @@ def get_ips_for_gen_dbt_model_directory():
 ######################################################################################################
 # Get inputs functions for gen_dbt_sql_objs.py
 ######################################################################################################
+def get_ip_tbls_for_data_src():
+    """fetch list of ip tables for the data_src"""
+    data = read_ip_config_file()
+
+    data_src = data["data_src_params"]["data_src"]
+    # data_src table specific key/values
+    data_src_ip_tbls = {}
+    data_src_ip_tbls["data_src_a"] = data["data_src_params"]["data_src_tables"]["data_src_a_src_tables"]
+
+    return data_src, data_src_ip_tbls
+
+
 def get_ips_for_gen_sql_objs():
     """Read input from config file for gen_dbt_sql_objs.py"""
 
     data = read_ip_config_file()
     env = data["general_params"]["env"]
     data_src = data["data_src_params"]["data_src"]
-    on_schema_change_behaviour = data["data_src_params"]["on_schema_change_behaviour"]
 
-    # data_src table specific key/values
-    data_src_ip_tbls = {}
+    # db-specific args for a data source
+    data_src_db_args = {}
     # TODO - the input for this would need to be manually changed
-    data_src_ip_tbls["data_src_a"] = data["general_params"]["data_src_tables"]["data_src_a_src_tables"]
-    snowflake_db = data["db_connection_params"]["snowflake_src_db"].replace("${DATA_SRC}", data_src).replace("${ENV}", env)
-    snowflake_db_schema_incremental = data["db_connection_params"]["snowflake_db_schema_incremental"]
+    data_src_db_args["snowflake_db"] = data["db_connection_params"]["snowflake_src_db"].replace("${DATA_SRC}", data_src).replace("${ENV}", env)
+    data_src_db_args["snapshot_schema"] = data["db_connection_params"]["sf_target_db_schema_snapshots"]
+    data_src_db_args["snowflake_db_schema_incremental"] = data["db_connection_params"]["sf_target_db_schema_incremental"]
 
-    return env, data_src, data_src_ip_tbls, snowflake_db, snowflake_db_schema_incremental, on_schema_change_behaviour
+    generator_script_args = {}
+    generator_script_args["on_schema_change_behaviour"] = data["data_src_params"]["on_schema_change_behaviour"]
+
+    return env, data_src, data_src_db_args, generator_script_args
 
 
 def get_ips_for_table_level_metadata():
@@ -81,8 +95,8 @@ def get_ips_for_src_properties():
 
     env = data["general_params"]["env"]
     data_src = data["data_src_params"]["data_src"]
-    src_snowflake_db = data["db_connection_params"]["snowflake_src_db"].replace("${DATA_SRC}", data_src).replace("${ENV}", env)
-    src_db_schema = data["db_connection_params"]["snowflake_src_db_schema"]
+    src_snowflake_db = data["db_connection_params"]["sf_src_db"].replace("${DATA_SRC}", data_src).replace("${ENV}", env)
+    src_db_schema = data["db_connection_params"]["sf_src_db_schema"]
 
     # data dictionary inputs
     data_dictionary = field_mapping_data["data_dictionary"].replace("{data_src}", data_src)
