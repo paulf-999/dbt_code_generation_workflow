@@ -47,7 +47,7 @@ The dbt project structure used follows the structure recommended by dbt in [How 
 │       └── all_dates.sql
 ├── snapshots
 │   └── {{ DATA_SRC }}
-│       └── {{ DATA_SRC_SRC_TABLE }}_snapshot.sql
+│       └── < DATA_SRC_SRC_TABLE >_snapshot.sql
 ├── tests
 │   └── generic
 │       └── sources
@@ -63,6 +63,7 @@ The dbt project structure used follows the structure recommended by dbt in [How 
 ### Project structure created using the 'dbt Code Generation Workflow'
 
 This dbt project and the files/folder structure used was generated using the 'dbt code generation workflow'. For more details, see [dbt_code_generation_workflow | github.com](https://github.com/paulf-999/dbt/tree/main/dbt_code_generation_workflow).
+
 ## 2. Folder contents
 
 Described below are the contents of each of the directories:
@@ -87,12 +88,12 @@ Further descriptions of some of the key directories are provided below:
 
 The key focus area of the dbt project design is the `models` directory - this is what we use to design how we will distinguish between differing DataOps pipelines.
 
-```
+```bash
 ├── models
 |   └── data_ingestion
 │       └── {{ DATA_SRC }}
 │       │      ├── {{ DBT_PROJECT_NAME }}__sources.yml
-│       │      └── {{ DATA_SRC_SRC_TABLE }}.sql
+│       │      └── < DATA_SRC_SRC_TABLE >.sql
 |   └── integration
 │       ├── intermediate
 │       │   ├── _int_<entity>__<verb>.yml.j2 (just a placeholder)
@@ -110,7 +111,7 @@ The key focus area of the dbt project design is the `models` directory - this is
 
 The `models` folder structure follows dbt’s recommended folder structure as shown below:
 
-```
+```bash
 ├── models
 │   ├── intermediate
 │   │   ├── _int_<entity>__<verb>.yml.j2 # just a placeholder)

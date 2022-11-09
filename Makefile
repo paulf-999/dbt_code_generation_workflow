@@ -89,43 +89,6 @@ add_data_source: get_ips
 	@echo -e "------------------------------------------------------------------\n"
 
 #############################################################################################
-# Setup/validation targets: 'get_ips' & 'validate_user_ip'
-#############################################################################################
-get_ips:
-	@# Target: 'get_ips'. Get input args from ip/config.yaml
-	@# general params
-	$(eval ENV=$(shell yq -r '.general_params.env | select( . != null )' ${CONFIG_FILE}))
-	$(eval AF2_DAGS_PATH=$(shell yq -r '.general_params.abs_path_to_airflow2_dags | select( . != null )' ${CONFIG_FILE}))
-	$(eval DATA_SRC=$(shell yq -r '.data_src_params.data_src | select( . != null )' ${CONFIG_FILE}))
-	@# db_connection params
-	$(eval SNOWFLAKE_USERNAME=$(shell yq -r '.db_connection_params.sf_username | select( . != null )' ${CONFIG_FILE}))
-	$(eval SNOWFLAKE_PRIVATE_FILE=$(shell yq -r '.db_connection_params.abs_path_to_snowflake_private_key | select( . != null )' ${CONFIG_FILE}))
-	$(eval SNOWFLAKE_ACCOUNT=$(shell yq -r '.db_connection_params.sf_account' ${CONFIG_FILE}))
-	$(eval SNOWFLAKE_WH=$(shell yq -r '.db_connection_params.sf_warehouse' ${CONFIG_FILE}))
-	$(eval SNOWFLAKE_ROLE=$(shell yq -r '.db_connection_params.sf_role' ${CONFIG_FILE}))
-	$(eval SNOWFLAKE_DB=$(shell yq -r '.db_connection_params.sf_src_db' ${CONFIG_FILE}))
-	$(eval SNOWFLAKE_SCHEMA=$(shell yq -r '.db_connection_params.sf_src_db_schema' ${CONFIG_FILE}))
-	@# dbt params
-	$(eval DBT_VERSION=$(shell yq -r '.dbt_params.dbt_version' ${CONFIG_FILE}))
-	$(eval DBT_PROFILE_NAME=$(shell yq -r '.dbt_params.dbt_profile_name' ${CONFIG_FILE}))
-	$(eval DBT_PROJECT_NAME=$(shell yq -r '.dbt_params.dbt_project_name' ${CONFIG_FILE}))
-	$(eval DBT_MODEL=$(shell yq -r '.dbt_params.dbt_model' ${CONFIG_FILE}))
-	$(eval PROGRAM=$(shell yq -r '.dbt_params.program' ${CONFIG_FILE}))
-
-validate_user_ip: get_ips
-	@echo "------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'validate_user_ip'. Validate the user inputs.${COLOUR_TXT_FMT_CLOSING}"
-	@echo "------------------------------------------------------------------"
-	# INFO: 1) Verify the user has provided a value for the key 'data_src' in ip/config.yaml
-	@[ "${DATA_SRC}" ] || ( echo -e "\nError: 'data_src' key is empty in ip/config.yaml\n"; exit 1 )
-	# INFO: 2) Verify the user has provided a value for the key 'snowflake_username' in ip/config.yaml
-	@[ "${SNOWFLAKE_USERNAME}" ] || ( echo -e "\nError: 'snowflake_username' key is empty in ip/config.yaml\n"; exit 1 )
-	# INFO: 3) Verify the user has provided a value for the key 'snowflake_private_key' in ip/config.yaml
-	@[ "${SNOWFLAKE_PRIVATE_FILE}" ] || ( echo -e "\nError: 'snowflake_private_key' key is empty in ip/config.yaml\n"; exit 1 )
-	# INFO: 4) Verify the user has provided a value for the key 'abs_path_to_airflow2_dags' in ip/config.yaml
-	@[ "${AF2_DAGS_PATH}" ] || ( echo -e "\nError: 'abs_path_to_airflow2_dags' key is empty in ip/config.yaml\n"; exit 1 )
-
-#############################################################################################
 # Targets used for dbt project setup
 #############################################################################################
 initialise_dbt_project: get_ips
@@ -144,7 +107,8 @@ initialise_dbt_project: get_ips
 	@make -s copy_templates_into_dbt_project
 	@echo
 	# Step 3: Generate the profiles.yml, dbt_project.yml and README files
-	@j2 ${DBT_PROJECT_NAME}/profiles/profiles.yml.j2 -o ${DBT_PROJECT_NAME}/profiles/profiles.yml
+	# @j2 ${DBT_PROJECT_NAME}/profiles/profiles.yml.j2 -o ${DBT_PROJECT_NAME}/profiles/profiles.yml
+	@j2 ${DBT_PROJECT_NAME}/profiles/profiles_w_pass.yml.j2 -o ${DBT_PROJECT_NAME}/profiles/profiles.yml
 	@rm -r ${DBT_PROJECT_NAME}/models/example && rm ${DBT_PROJECT_NAME}/README.md
 	@j2 templates/jinja_templates/dbt_project.yml.j2 -o ${DBT_PROJECT_NAME}/dbt_project.yml
 	@j2 templates/jinja_templates/README.md.j2 -o ${DBT_PROJECT_NAME}/README.md
@@ -265,3 +229,49 @@ gen_sql_objs_for_restriced_and_landed_layers: get_ips
 	@echo -e "${COLOUR_TXT_FMT_OPENING}# Generate sql for the 'landed' layer.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "---------------------------------------------------------------"
 	@python3 py/gen_dbt_sql_objs.py landed
+
+#############################################################################################
+# Setup/validation targets: 'get_ips' & 'validate_user_ip'
+#############################################################################################
+get_ips:
+	@echo "------------------------------------------------------------------"
+	@echo "${COLOUR_TXT_FMT_OPENING}Target: 'get_ips'. Get input args from config.yaml.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------"
+	@# general params
+	$(eval ENV=$(shell yq -r '.general_params.env | select( . != null )' ${CONFIG_FILE}))
+	$(eval AF2_DAGS_PATH=$(shell yq -r '.general_params.abs_path_to_airflow2_dags | select( . != null )' ${CONFIG_FILE}))
+	$(eval DATA_SRC=$(shell yq -r '.data_src_params.data_src | select( . != null )' ${CONFIG_FILE}))
+	@# db_connection params
+	$(eval SNOWFLAKE_USERNAME=$(shell yq -r '.db_connection_params.sf_username | select( . != null )' ${CONFIG_FILE}))
+	$(eval SNOWFLAKE_PASS=$(shell yq -r '.db_connection_params.sf_pass | select( . != null )' ${CONFIG_FILE}))
+	$(eval SNOWFLAKE_PRIVATE_FILE=$(shell yq -r '.db_connection_params.abs_path_to_snowflake_private_key | select( . != null )' ${CONFIG_FILE}))
+	$(eval SNOWFLAKE_ACCOUNT=$(shell yq -r '.db_connection_params.sf_account' ${CONFIG_FILE}))
+	$(eval SNOWFLAKE_WH=$(shell yq -r '.db_connection_params.sf_warehouse' ${CONFIG_FILE}))
+	$(eval SNOWFLAKE_ROLE=$(shell yq -r '.db_connection_params.sf_role' ${CONFIG_FILE}))
+	$(eval SNOWFLAKE_DB=$(shell yq -r '.db_connection_params.sf_src_db' ${CONFIG_FILE}))
+	$(eval SNOWFLAKE_SCHEMA=$(shell yq -r '.db_connection_params.sf_src_db_schema' ${CONFIG_FILE}))
+	@# dbt params
+	$(eval DBT_VERSION=$(shell yq -r '.dbt_params.dbt_version' ${CONFIG_FILE}))
+	$(eval DBT_PROFILE_NAME=$(shell yq -r '.dbt_params.dbt_profile_name | select( . != null )' ${CONFIG_FILE}))
+	$(eval DBT_PROJECT_NAME=$(shell yq -r '.dbt_params.dbt_project_name | select( . != null )' ${CONFIG_FILE}))
+	$(eval DBT_MODEL=$(shell yq -r '.dbt_params.dbt_model' ${CONFIG_FILE}))
+	$(eval PROGRAM=$(shell yq -r '.dbt_params.program' ${CONFIG_FILE}))
+
+validate_user_ip: get_ips
+	@echo "------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'validate_user_ip'. Validate the user inputs.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------"
+	# INFO: 1) Verify the user has provided a value for the key 'data_src' in ip/config.yaml
+	@[ "${DATA_SRC}" ] || ( echo -e "\nError: 'data_src' key is empty in ip/config.yaml\n"; exit 1 )
+	# INFO: 2) Verify the user has provided a value for the key 'snowflake_username' in ip/config.yaml
+	@[ "${SNOWFLAKE_USERNAME}" ] || ( echo -e "\nError: 'snowflake_username' key is empty in ip/config.yaml\n"; exit 1 )
+	@# INFO: 3) Verify the user has provided a value for the key 'snowflake_private_key' in ip/config.yaml
+	#@[ "${SNOWFLAKE_PRIVATE_FILE}" ] || ( echo -e "\nError: 'snowflake_private_key' key is empty in ip/config.yaml\n"; exit 1 )
+	# INFO: 3) Verify the user has provided a value for the key 'sf_pass' in ip/config.yaml
+	@[ "${SNOWFLAKE_PASS}" ] || ( echo -e "\nError: 'sf_pass' key is empty in ip/config.yaml\n"; exit 1 )
+	@# INFO: 4) Verify the user has provided a value for the key 'dbt_project_name' in ip/config.yaml
+	@[ "${DBT_PROJECT_NAME}" ] || ( echo -e "\nError: 'dbt_project_name' key is empty in ip/config.yaml\n"; exit 1 )
+	@# INFO: 5) Verify the user has provided a value for the key 'dbt_profile_name' in ip/config.yaml
+	@[ "${DBT_PROFILE_NAME}" ] || ( echo -e "\nError: 'dbt_profile_name' key is empty in ip/config.yaml\n"; exit 1 )
+	@# INFO: 6) Verify the user has provided a value for the key 'abs_path_to_airflow2_dags' in ip/config.yaml
+	#@[ "${AF2_DAGS_PATH}" ] || ( echo -e "\nError: 'abs_path_to_airflow2_dags' key is empty in ip/config.yaml\n"; exit 1 )
