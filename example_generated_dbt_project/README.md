@@ -1,3 +1,166 @@
-# Boilerplate dbt Project
+# example_generated_dbt_project
 
-TODO - update this README.
+dbt project files used for the example_generated_dbt_project project.
+
+---
+
+## Contents
+
+1. High-level summary
+  * Project structure created using the 'dbt Code Generation Workflow'
+2. Folder contents
+3. Further details, re: Key dbt Folders
+  * 3.1. Models
+  * 3.2. Snapshots
+  * 3.3. Tests
+
+---
+
+## 1. High-level summary
+
+The dbt project structure used follows the structure recommended by dbt in [How we structure our dbt projects | dbtlabs.com](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview), as shown in the file tree below:
+
+```bash
+example_generated_dbt_project
+├── analysis
+├── data
+├── docs
+│   └── pull_request_template.md
+├── macros
+│   ├── _macros.yml
+│   ├── generate_schema_name.sql
+│   └── grant_select_on_schemas.sql
+├── models
+│   ├── intermediate
+│   │   ├── _int_<entity>__<verb>.yml.j2 # just a placeholder)
+│   │   └── example_cte.sql.j2 #placeholder)
+│   ├── marts
+│   │   ├── _models.yml.j2 #placeholder
+│   │   └── dim_customer.sql.j2 #placeholder
+│   ├── staging
+│   │   ├── example_generated_dbt_project
+│   │   │   ├── example_generated_dbt_project__docs.md
+│   │   │   ├── example_generated_dbt_project__models.yml
+│   │   │   ├── example_generated_dbt_project__sources.yml
+│   │   │   └── stg_data_src_a__customer.sql
+│   └── utilities
+│       └── all_dates.sql
+├── snapshots
+│   └── data_src_a
+│       └── < DATA_SRC_SRC_TABLE >_snapshot.sql
+├── tests
+│   └── generic
+│       └── sources
+│       |    └── existence
+│       |    |   └── raw_table_existence.sql
+│       |    └── row_count
+│       |    |   └── is_table_empty.sql
+├── README.md
+├── dbt_project.yml
+└── packages.yml
+```
+
+### Project structure created using the 'dbt Code Generation Workflow'
+
+This dbt project and the files/folder structure used was generated using the 'dbt code generation workflow'. For more details, see [dbt_code_generation_workflow | github.com](https://github.com/paulf-999/dbt/tree/main/dbt_code_generation_workflow).
+
+## 2. Folder contents
+
+Described below are the contents of each of the directories:
+
+| Folder | Description                  |
+| -------| -----------------------------|
+| `analysis` | * dbt-generated folder that contains common, reusable SQL queries that are exclusively used for analysis and not used as part of transformation pipelines.<br/>* Any .sql files found in the analyses/ directory of a dbt project will be compiled, but not executed. <br/>* See [dbt Analysis - docs.getdbt.com](https://docs.getdbt.com/docs/build/analyses) for more details. |
+| `docs` | * Contains supporting reference documentation to be used as part of any dbt project. |
+| `macros` | * dbt-generated folder that contains blocks of code that you can reuse multiple times.<br/>* See [Jinja and macros - docs.getdbt.com](https://docs.getdbt.com/docs/build/jinja-macros) for more details. |
+| `models` | * dbt-generated folder that contains the dbt models to be created as part of given dbt jobs.<br/>* Each model lives in a single file and contains logic that either transforms raw data into a dataset that is ready for analytics or, more often, is an intermediate step in such a transformation.<br/>* See [About dbt models - docs.getdbt.com](https://docs.getdbt.com/docs/build/models) for more details. |
+| `profiles` | * Contains your dbt profiles.yml file, which in turn contains the details required to connect to your data warehouse. |
+| `seeds` | * dbt-generated folder that contains CSV files with static data that you can load into your data platform with dbt. |
+| `snapshots` | * dbt-generated folder that SQL files to be used to capture the state of your mutable tables so you can refer to it later. |
+| `style_guides` | * Contains style guide files to be used throughout the example_generated_dbt_project project. |
+| `tests` | * dbt-generated folder that contains SQL queries that you can write to test the models and resources in your project. |
+
+## 3. Further details, re: Key dbt Folders
+
+Further descriptions of some of the key directories are provided below:
+
+### 3.1. Models
+
+The key focus area of the dbt project design is the `models` directory - this is what we use to design how we will distinguish between differing DataOps pipelines.
+
+```bash
+├── models
+|   └── data_ingestion
+│       └── data_src_a
+│       │      ├── example_generated_dbt_project__sources.yml
+│       │      └── < DATA_SRC_SRC_TABLE >.sql
+|   └── integration
+│       ├── intermediate
+│       │   ├── _int_<entity>__<verb>.yml.j2 (just a placeholder)
+│       │   └── example_cte.sql.j2 (placeholder)
+│       ├── marts
+│       │   ├── _models.yml.j2 (placeholder)
+│       │   └── dim_customer.sql (placeholder)
+│       ├── staging
+│       │   ├── example_generated_dbt_project
+│       │   │   ├── example_generated_dbt_project__docs.md (TBC)
+│       │   │   ├── example_generated_dbt_project__models.yml
+│       │   │   ├── example_generated_dbt_project__sources.yml
+│       │   └── data_src_a_stg__customer.sql
+```
+
+The `models` folder structure follows dbt’s recommended folder structure as shown below:
+
+```bash
+├── models
+│   ├── intermediate
+│   │   ├── _int_<entity>__<verb>.yml.j2 # just a placeholder)
+│   │   └── example_cte.sql.j2 #placeholder)
+│   ├── marts
+│   │   ├── _models.yml.j2 #placeholder
+│   │   └── dim_customer.sql.j2 #placeholder
+│   ├── staging
+│   │   ├── example_generated_dbt_project
+│   │   │   ├── example_generated_dbt_project__docs.md
+│   │   │   ├── example_generated_dbt_project__models.yml
+│   │   │   ├── example_generated_dbt_project__sources.yml
+│   │   │   └── stg_data_src_a__customer.sql
+│   └── utilities
+│       └── all_dates.sql
+```
+
+Whereby the processing flow is as follows:
+
+1. Create the staging table using the dbt command: `dbt run --select staging.data_src_a_stg__customer`
+2. (If required) Create the intermediate table using the dbt command: `dbt run --select intermediate.<model_name>`
+3. Create the final marts table using the dbt command: `dbt run --select marts.dim_customer (for example)`
+
+### 3.2. Snapshots
+
+* Contains (data-source-specific) SQL used to generate dbt snapshot tables
+* To help distinguish between each data source's snapshot SQL files, dedicated data source folders exist underneath the snapshots folder. I.e.:
+
+```bash
+├── snapshots
+│   └── data_src_a
+│       └── data_src_a_${SRC_TABLE}_snapshot.sql
+```
+
+### 3.3. Tests
+
+At the moment, this only contains additional (dbt) `generic` tests. Specifically relating to:
+
+* (Source) Existence tests: to validate whether a source exists
+* (Source) Row count tests: to validate whether certain row count tests are passed
+
+And these files are structured as shown below:
+
+```bash
+├── tests
+│   └── generic
+│       └── sources
+│       |    └── existence
+│       |    |   └── raw_table_existence.sql
+│       |    └── row_count
+│       |    |   └── is_table_empty.sql
+```

@@ -1,5 +1,5 @@
 # Name of the dbt project. Must be snake_case, i.e., letters, digits and underscores only, and cannot start with a digit.
-name: 'example_dbt_project'
+name: 'example_generated_dbt_project'
 # Recommendation: An organisation often only has one dbt project, so it makes sense to name a project with your organisation's name, in snake_case.
 config-version: 2
 version: '1.2.0'
@@ -30,7 +30,7 @@ clean-targets:         # directories to be removed by `dbt clean`
 
 # The model configurations listed below follow dbt's best practices, described here: https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview
 models:
-  example_dbt_project:
+  example_generated_dbt_project:
     staging:
       # Purpose: the staging layer is to create models from raw data.
       # It's also used to rename and recast fields once. All subsequent data models should be built on top of the staging models, reducing the amount of duplicated code.

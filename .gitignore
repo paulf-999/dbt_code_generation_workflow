@@ -42,3 +42,10 @@ pids
 
 sdw/
 example.xlsx
+
+ip/config_mine.yaml
+
+# dbt project files
+target/
+dbt_packages/
+logs/

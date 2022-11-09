@@ -7,7 +7,7 @@
       role: {{ SNOWFLAKE_ROLE }}
 
       user: {{ SNOWFLAKE_USERNAME }}
-      private_key_path: {{ SNOWFLAKE_PRIVATE_FILE }}
+      password: {{ SNOWFLAKE_PASS }}
 
       database: {{ SNOWFLAKE_DB }}
       warehouse: {{ SNOWFLAKE_WH }}
@@ -23,7 +23,7 @@ local_{{ DBT_PROFILE_NAME }}:
       role: {{ SNOWFLAKE_ROLE }}
 
       user: {{ SNOWFLAKE_USERNAME }}
-      private_key_path: <TODO - KEYPATH_HERE>
+      password: <TODO - KEYPATH_HERE>
 
       database: {{ SNOWFLAKE_DB }}
       warehouse: {{ SNOWFLAKE_WH }}

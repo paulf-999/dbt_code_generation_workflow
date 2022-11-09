@@ -1,7 +1,7 @@
 [sqlfluff]
 dialect = snowflake
-#templater = dbt
-templater = jinja
+templater = dbt
+# templater = jinja
 sql_file_exts = .sql,.sql.j2,.dml,.ddl
 
 # allow aliasing in from clauses and join conditions.
@@ -9,9 +9,9 @@ exclude_rules = L031
 
 [sqlfluff:templater:dbt]
 # pass in our dbt project/cred details
-project_dir =
-profiles_dir =
-profile =
+project_dir = example_generated_dbt_project
+profiles_dir = example_generated_dbt_project/profiles
+profile = eg_company
 
 [sqlfluff:templater:jinja]
 apply_dbt_builtins = True

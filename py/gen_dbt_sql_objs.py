@@ -22,19 +22,33 @@ import error_op
 
 def generate_sql_op(data_src, src_table, rendered_sql):
     """generate an output sql file using the rendered_sql value"""
+
     # make the target dir if it doesn't exist
     target_dir = f"op/{data_src}/{ip_jinja_template}"
     verify_dir_exists(target_dir)
 
     if ip_jinja_template == 'snapshot':
         op_filepath = os.path.join(target_dir, f"{src_table}_snapshot.sql")
-    else:
+    elif ip_jinja_template == 'incremental':
         op_filepath = os.path.join(target_dir, f"{src_table}.sql")
+    else:
+        op_filepath = os.path.join(target_dir, f"{ip_jinja_template}_{data_src}.sql")
 
     logger.debug(f"op_filepath = {op_filepath}")
 
-    with open((op_filepath), "w") as op_sql_file:
-        op_sql_file.write(rendered_sql)
+    # initialise the var
+    file_write_mode = ''
+
+    # prepare the file_write mode
+    if ip_jinja_template in ('snapshot', 'incremental'):
+        file_write_mode = "w"
+    elif ip_jinja_template in ('restricted', 'landed'):
+        file_write_mode = "a"
+
+    # write the output file
+    with open((op_filepath), file_write_mode) as op_sql_file:
+        logger.debug(f"writing out {src_table}")
+        op_sql_file.write(f"{rendered_sql}")
 
     return
 
@@ -60,13 +74,24 @@ def parse_data_src_summary_metadata(data_src, src_table):
     return primary_key_field, created_at_field, updated_at_field
 
 
-def render_jinja(data_src, src_table, env, snowflake_db, snowflake_db_schema_incremental, on_schema_change_behaviour):
+def render_jinja(data_src, src_table):
     """Iterate through the input tables for a data_src and render/generate SQL op files"""
 
-    # read in the CSV file to determine the 'unique_key' & 'load_date_field' fields
+    # fetch list of ip tables for the data_src
+    env, data_src, data_src_db_args, generator_script_args = inputs.get_ips_for_gen_sql_objs()
+
+    # expand vars from python dictionaries - start with `data_src_db_args` dict
+    snowflake_db = data_src_db_args["snowflake_db"]
+    snapshot_schema = data_src_db_args["snapshot_schema"]
+    snowflake_db_schema_incremental = data_src_db_args["raw_hist_schema"]
+
+    # expand args for `generator_script_args` dict
+    on_schema_change_behaviour = generator_script_args["on_schema_change_behaviour"]
+
+    # read in the CSV file to determine 'unique_key' & 'load_date_field' fields
     primary_key_field, created_at_field, updated_at_field = parse_data_src_summary_metadata(data_src, src_table)
 
-    # render the jinja template output
+    # render the table output
     # fmt: off
     rendered_sql = jinja_env.get_template(f"{ip_jinja_template}.sql.j2").render(
         src_tbl_name=src_table,
@@ -76,6 +101,7 @@ def render_jinja(data_src, src_table, env, snowflake_db, snowflake_db_schema_inc
         created_at=created_at_field,
         updated_at=updated_at_field,
         snowflake_src_db=snowflake_db,
+        db_schema_snapshots=snapshot_schema,
         db_schema_incremental=snowflake_db_schema_incremental,
         on_schema_change=on_schema_change_behaviour
     )
@@ -87,10 +113,13 @@ def render_jinja(data_src, src_table, env, snowflake_db, snowflake_db_schema_inc
 def main():
     """Main orchestration routine"""
 
-    # fetch list of data_src tables
-    env, ip_data_src, data_src_ip_tbls, snowflake_db, snowflake_db_schema_incremental, on_schema_change_behaviour = inputs.get_ips_for_gen_sql_objs()
+    # fetch list of ip tables for the data_src
+    ip_data_src, data_src_ip_tbls = inputs.get_ip_tbls_for_data_src()
 
-    # iterate through data_src_ip_tbls
+    # initialise the var
+    rendered_sql = ''
+
+    # only fetch the tables for the targeted data_src
     for data_src, src_tables in data_src_ip_tbls.items():
         logger.debug("--------------------------------")
         logger.debug(f"# data_src = {data_src}")
@@ -104,7 +133,7 @@ def main():
                 logger.debug("################################")
 
                 # render the SQL templates for each src_table
-                rendered_sql = render_jinja(data_src, src_table, env, snowflake_db, snowflake_db_schema_incremental, on_schema_change_behaviour)
+                rendered_sql = render_jinja(data_src, src_table)
 
                 # generate a dedicated SQL file for each src_table
                 generate_sql_op(data_src, src_table, rendered_sql)

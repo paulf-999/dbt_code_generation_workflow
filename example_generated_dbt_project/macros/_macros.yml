@@ -25,3 +25,13 @@ macros:
         type: 'String'
         description: >
           'The Snowflake role we want to assign the select permissions to.'
+
+  - name: limit_row_count
+    description: >
+      'A [recommended best practice by dbt](https://docs.getdbt.com/guides/legacy/best-practices#pro-tips-for-dbt-projects),
+      this is a simple macro to apply a SQL limit command. Core use is to limit records selected whilst running pipelines in dev environments.
+    arguments:
+      - name: row_count
+        type: 'String'
+        description: >
+          'Number of rows to return/limit by.'
