@@ -1,5 +1,13 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
+
+# all commands by default will run on every commit
+default_install_hook_types: [pre-commit]
+default_stages: [commit]
+
+# some configs are only available after v2.18
+minimum_pre_commit_version: '2.18'
+
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.2.0
