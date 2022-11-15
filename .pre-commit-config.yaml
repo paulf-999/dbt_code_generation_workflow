@@ -14,6 +14,7 @@ repos:
           'dbt-snowflake',
           'sqlfluff-templater-dbt'
         ]
+
   - repo: https://github.com/adrienverge/yamllint.git
     rev: v1.17.0
     hooks:
@@ -28,6 +29,7 @@ repos:
         #      - id: check-model-has-all-columns
         #      - id: check-model-has-tests
         #        args: ["--test-cnt", "2", "--"]
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.2.0
     hooks:
@@ -46,21 +48,25 @@ repos:
       - id: sort-simple-yaml  # sorts simple YAML files, preserving comments and blocks.
       - id: trailing-whitespace  # trims trailing whitespace.
         language_version: python3
+
   - repo: https://github.com/PyCQA/flake8
     rev: 3.9.2
     hooks:
       - id: flake8  # enforces flake8 style consistency across Python projects.
         language_version: python3
         args: [--max-line-length=150, --max-complexity=10]
+
   - repo: https://github.com/asottile/reorder_python_imports
     rev: v2.6.0
     hooks:
       - id: reorder-python-imports  # This hook reorders imports in python files.
+
   - repo: https://github.com/asottile/pyupgrade
     rev: v2.29.0
     hooks:
       - id: pyupgrade  # automatically upgrade syntax for newer versions
         args: [--py36-plus]
+
   - repo: https://github.com/jumanjihouse/pre-commit-hooks
     rev: 3.0.0
     hooks:
@@ -68,6 +74,7 @@ repos:
         args: [-s, .markdownlint.rb]
       - id: shellcheck  # Ensure shell scripts conform to shellcheck
       - id: shfmt  # Check shell style with shfmt
+
   - repo: https://github.com/aws-cloudformation/cfn-lint
     rev: v0.69.1   # the version of cfn-lint to use
     hooks:
