@@ -26,9 +26,11 @@ deps: get_ips
 	@echo "----------------------------------------------------------------------------------------------------------------------"
 	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'deps'. Download the relevant pip package dependencies (note: ignore the pip depedency resolver errors.)${COLOUR_TXT_FMT_CLOSING}"
 	@echo "----------------------------------------------------------------------------------------------------------------------"
-	@pip3 install -q -r requirements.txt
-	@pip3 uninstall keyring -qy && pip3 install keyring -q # there is a module conflict here that otherwise throws a warning
-	@pip3 install --upgrade dbt-snowflake==${DBT_VERSION} -q
+	@virtualenv -p python3 venv; \
+	source venv/bin/activate; \
+	pip3 install -r requirements.txt; \
+	pip3 install --upgrade dbt-snowflake==${DBT_VERSION} -q
+
 
 #############################################################################################
 # 'install' & 'add_data_source' are the two main routines of this Makefile
