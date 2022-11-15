@@ -19,8 +19,8 @@ apply_dbt_builtins = True
 [sqlfluff:indentation]
 indented_joins = true
 
-[sqlfluff:rules]
-comma_style = leading
+[sqlfluff:layout:type:comma]
+line_position = leading
 
 [sqlfluff:rules:L010] # Inconsistent capitalisation of keywords.
 capitalisation_policy = upper
