@@ -15,5 +15,4 @@ FROM {{ '{{' }} ref('{{ src_tbl_name }}_snapshot') {{ '}}' }}
     SELECT MAX({{ updated_at }})
     FROM {{ '{{' }} this {{ '}}' }}
   )
-
 {{ '{' }}%- endif %{{ '}' }}

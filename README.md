@@ -28,7 +28,7 @@ Note, re: step 3 - there's also a routine to add new data sources, see *'How to 
 
 The goal of these scripts is to accelerate dbt development through the use of code generation scripts. These automation scripts look to:
 
-#### 1. Automate the dbt Project Setup Process
+#### Automate the dbt Project Setup Process
 
 It does this by:
 
@@ -46,14 +46,14 @@ It does this by:
   * `generate_schema_name` - commonly revised dbt macro
   * `grant_select_on_schemas` - dbt-recommended macro to grant access to all tables in a schema
 
-#### 2. Generate (dbt) sql files in bulk that use the [`snapshot`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/templates/jinja_templates/snapshot.sql.j2) and [`incremental`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/templates/jinja_templates/incremental.sql.j2) patterns (templates)
+#### Generate (dbt) sql files in bulk that use the [`snapshot`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/templates/jinja_templates/snapshot.sql.j2) and [`incremental`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/templates/jinja_templates/incremental.sql.j2) patterns (templates)
 
-#### 3. Automate the creation of the dbt `_source.yml` resource property file for a given data source
+#### Automate the creation of the dbt `_source.yml` resource property file for a given data source
 
 * And importantly include (dbt) `unique` and `not null` tests for every source primary key.
 * Add additional generic dbt tests (e.g., unique, not_null, accepted_values, relationships) per column, as indicated by the (template) input data dictionary.
 
-#### 4. Recreate the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview)
+#### Recreate the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview)
 
 As shown below:
 
@@ -101,6 +101,13 @@ ${DBT_PROJECT_NAME}
 ```
 
 ## 2. How to Run
+
+Before you do anything, ensure you install and setup `pre-commit` by running:
+
+```bash
+pip install -r requirements.txt
+pre-commit install
+```
 
 ### Prerequisites
 

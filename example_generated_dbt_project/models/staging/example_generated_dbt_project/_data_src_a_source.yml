@@ -1,0 +1,52 @@
+version: 2
+
+sources:
+  - name: data_src_a
+    database: BIKE_SHOP_RAW_DB
+    schema: PRODUCTION
+    tables:
+      - name: table_a
+        columns:
+          - name: CUSTOMER_ID
+            description: "Example table description"
+            tests:
+              - unique
+              - not_null
+              - relationships:
+                  to: ref('data_src_a_table_b')
+                  field: customer_id
+          - name: LANDED_TIMESTAMP
+            description: "Example table description"
+            tests:
+              - not_null
+          - name: EG_ACCEPTED_VALUES_TEST
+            description: "Example field for the accepted_values test"
+            tests:
+              - accepted_values:
+                  values: a, b, c
+          - name: EG_FK_CONSTRAINT_TEST
+            description: "Example field for the 'relationships' test"
+            tests:
+              - relationships:
+                  to: ref('data_src_a_table_b')
+                  field: customer_id
+      - name: table_b
+        columns:
+          - name: CUSTOMER_ID
+            description: "Example table description"
+            tests:
+              - unique
+              - not_null
+              - relationships:
+                  to: ref('data_src_a_table_a')
+                  field: customer_id
+          - name: LANDED_TIMESTAMP
+            description: "Example table description"
+          - name: EG_FK_CONSTRAINT_TEST
+            description: "Example field for the 'relationships' test"
+            tests:
+              - accepted_values:
+                  values: a,b,c
+              - relationships:
+                  to: ref('data_src_a_table_a')
+                  field: customer_id
