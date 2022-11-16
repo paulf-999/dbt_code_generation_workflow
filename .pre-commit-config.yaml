@@ -29,7 +29,8 @@ repos:
       - id: check-source-table-has-description
       # - id: check-model-columns-have-desc
       # - id: check-model-has-all-columns
-      # - id: check-model-has-tests
+      - id: check-source-has-tests
+        args: ["--manifest", "example_generated_dbt_project/target/manifest.json"]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.2.0
