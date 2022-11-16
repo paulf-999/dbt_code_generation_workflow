@@ -8,6 +8,8 @@ Automation scripts to accelerate dbt development, namely using code generation s
 
 Doing this ensures that new dbt projects implement best practices from the off and removes much of the manual heavy lifting of dbt projects.
 
+See [example_generated_dbt_project](https://github.com/paulf-999/dbt_code_generation_workflow/tree/feature/dbt_gloss/example_generated_dbt_project) as an example dbt project generated using these scripts.
+
 ---
 
 ## Contents
