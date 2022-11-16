@@ -1,7 +1,6 @@
 ---
 general_params:
   env: dev
-  abs_path_to_airflow2_dags:  # e.g., <path-to>/airflow-v2-dags. Note: don't include a trailing backslash.
 db_connection_params:
   sf_username:  # e.g., jbloggs@email.com
   sf_pass:

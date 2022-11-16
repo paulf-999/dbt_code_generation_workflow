@@ -226,7 +226,6 @@ get_ips:
 	@echo "------------------------------------------------------------------"
 	@# general params
 	$(eval ENV=$(shell yq -r '.general_params.env | select( . != null )' ${CONFIG_FILE}))
-	$(eval AF2_DAGS_PATH=$(shell yq -r '.general_params.abs_path_to_airflow2_dags | select( . != null )' ${CONFIG_FILE}))
 	$(eval DATA_SRC=$(shell yq -r '.data_src_params.data_src | select( . != null )' ${CONFIG_FILE}))
 	@# db_connection params
 	$(eval SNOWFLAKE_USERNAME=$(shell yq -r '.db_connection_params.sf_username | select( . != null )' ${CONFIG_FILE}))
@@ -260,5 +259,3 @@ validate_user_ip: get_ips
 	@[ "${DBT_PROJECT_NAME}" ] || ( echo -e "\nError: 'dbt_project_name' key is empty in ip/config.yaml\n"; exit 1 )
 	@# INFO: 5) Verify the user has provided a value for the key 'dbt_profile_name' in ip/config.yaml
 	@[ "${DBT_PROFILE_NAME}" ] || ( echo -e "\nError: 'dbt_profile_name' key is empty in ip/config.yaml\n"; exit 1 )
-	@# INFO: 6) Verify the user has provided a value for the key 'abs_path_to_airflow2_dags' in ip/config.yaml
-	#@[ "${AF2_DAGS_PATH}" ] || ( echo -e "\nError: 'abs_path_to_airflow2_dags' key is empty in ip/config.yaml\n"; exit 1 )
