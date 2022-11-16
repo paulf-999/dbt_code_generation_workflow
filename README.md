@@ -2,12 +2,11 @@
 
 Automation scripts to accelerate dbt development, namely using code generation scripts to:
 
-1. Automate the dbt project setup process, designing the project to follow best practices & include common best practice files.
-2. Generate (dbt) SQL files in bulk either as: `snapshots` tables or `incremental` loads.
-3. Automate the creation of the dbt `_sources.yml` resource property file for a given data source.
-4. Recreate the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview).
+1. Automate the dbt project setup process, designing the project to follow [dbt's recommended project structure](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview).
+2. Automate the creation of the dbt `_sources.yml` resource property file for a given data source.
+3. Generate (dbt) SQL files in bulk either as: `snapshots` tables or `incremental` loads.
 
-Note, re: step 3 - there's also a routine to add new data sources, see *'How to Add a New Data Source if the dbt Project Already Exists'*.
+Doing this ensures that new dbt projects implement best practices from the off and removes much of the manual heavy lifting of dbt projects.
 
 ---
 
@@ -15,20 +14,24 @@ Note, re: step 3 - there's also a routine to add new data sources, see *'How to 
 
 1. Goal
 2. How to Run
-
-* Prerequisites
-* Steps
-* How to Add a New Data Source if the dbt Project Already Exists
-
+   1. Prerequisites
+   2. Steps
+   3. How to Add a New Data Source
 3. Implementation Details
 
 ---
 
-### 1. Goal
+## 1. Goal
 
-The goal of these scripts is to accelerate dbt development through the use of code generation scripts. These automation scripts look to:
+The goal of these scripts is to accelerate dbt development through the use of code generation scripts. These scripts look to:
 
-#### Automate the dbt Project Setup Process
+### i. Automate the dbt Project Setup Process
+
+Designing the project to follow [dbt's recommended project structure](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview) and implement best practices. Expand the menu below for more details.
+
+<details>
+
+<summary>Expand for more details</summary>
 
 It does this by:
 
@@ -45,17 +48,11 @@ It does this by:
   * `limit_row_count` - custom macro to limit row counts when in lower (e.g., dev) environments
   * `generate_schema_name` - commonly revised dbt macro
   * `grant_select_on_schemas` - dbt-recommended macro to grant access to all tables in a schema
+  * And recreate the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview), as shown below:
 
-#### Generate (dbt) sql files in bulk that use the [`snapshot`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/templates/jinja_templates/snapshot.sql.j2) and [`incremental`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/templates/jinja_templates/incremental.sql.j2) patterns (templates)
+<details>
 
-#### Automate the creation of the dbt `_sources.yml` resource property file for a given data source
-
-* And importantly include (dbt) `unique` and `not null` tests for every source primary key.
-* Add additional generic dbt tests (e.g., unique, not_null, accepted_values, relationships) per column, as indicated by the (template) input data dictionary.
-
-#### Recreate the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview)
-
-As shown below:
+<summary>Click to show target dbt project structure</summary>
 
 ```bash
 ${DBT_PROJECT_NAME}
@@ -80,8 +77,8 @@ ${DBT_PROJECT_NAME}
 │   │   │   ├── ${DBT_PROJECT_NAME}__models.yml
 │   │   │   ├── ${DBT_PROJECT_NAME}__sources.yml
 │   │   │   ├── base (TBC)
-│   │   │   │   ├── base_jaffle_shop__customers.sql
-│   │   │   │   └── base_jaffle_shop__deleted_customers.sql
+│   │   │   │   ├── base_${DBT_PROJECT_NAME}__customers.sql
+│   │   │   │   └── base_${DBT_PROJECT_NAME}__deleted_customers.sql
 │   │   │   ├── ${DBT_PROJECT_NAME}__customer.sql
 │   └── utilities
 │       └── all_dates.sql
@@ -100,6 +97,44 @@ ${DBT_PROJECT_NAME}
 └── packages.yml
 ```
 
+</details>
+
+</details>
+
+### ii. Automate the creation of the dbt `_sources.yml` resource property file for a given data source
+
+<details>
+
+<summary>Expand for more details</summary>
+
+* See `gen_source_properties_file` in the `Makefile`.
+* This step automates the creation of the dbt source properties file (i.e., `_sources.yml`) for each data source, using the python script `py/gen_dbt_src_properties.py`.
+* A key prerequisite for this step is for the user to supply data dictionary type input file, to indicate (per table) at a field-level:
+  * The field description
+  * and flags to indicate whether the following 'generic' dbt test should be applied to the field:
+    * Unique
+    * Not null
+    * Accepted values
+    * Relationship constraints
+
+</details>
+
+### iii. Generate (dbt) sql files in bulk that use the [`snapshot`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/templates/jinja_templates/snapshot.sql.j2) and [`incremental`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/templates/jinja_templates/incremental.sql.j2) patterns
+
+<details>
+
+<summary>Expand for more details</summary>
+
+* See `gen_dbt_sql_objs` in the `Makefile`.
+* This steps automates the creation of (dbt) SQL files in bulk (either as: `snapshot` or `incremental [load]` SQL files) using Jinja templates. It does this using the python script `py/gen_dbt_sql_objs.py`.
+* As with step 2 'Generate the dbt 'source properties' file', a key prerequisite for this step is for the user to supply a data-dictionary type input file (this time at the data source-level), to indicate per source table what the:
+  * Primary key is
+  * and what the 'last_updated_field' is per table
+
+</details>
+
+---
+
 ## 2. How to Run
 
 Before you do anything, ensure you install and setup `pre-commit` by running:
@@ -111,30 +146,39 @@ pre-commit install
 
 ### Prerequisites
 
-Before you run the above commands, ensure you provide values for each of the keys in [`ip/config.yaml`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/ip/config.yaml). For a description breakdown of each of the input args, see [`ip/README.md`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/ip/README.md).
-
-In addition, for a breakdown of each of the input args used for the data dictionary field mapping args, see [`ip/data_dic_field_mapping_prereqs.md`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/ip/data_dic_field_mapping_prereqs.md).
+* Ensure you provide values for each of the keys in [`ip/config.yaml`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/ip/config.yaml).
+  * For a description breakdown of each of the input args, see [`ip/README.md`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/ip/README.md).
+* Review the input args used for the data dictionary field mapping args,
+  * If you used the template data dictionary file, no changes will be required. For more details, see [`ip/data_dic_field_mapping_prereqs.md`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/ip/data_dic_field_mapping_prereqs.md).
 
 ### Steps
 
 1. Update the input parameters within [`ip/config.yaml`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/ip/config.yaml).
-2. Update the other input parameters within [`ip/data_dic_field_mapping_config.yaml`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/ip/data_dic_field_mapping_config.yaml).
-3. Upload an input data dictionary to the `ip` folder and update the value of the `data dictionary` key within [`ip/data_dic_field_mapping_config.yaml`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/ip/data_dic_field_mapping_config.yaml) accordingly.
-4. Install the prerequisites libraries by running: `make deps`.
-5. Run `make install` to:
+
+2. Upload an input data dictionary to the `ip/` folder and (if required) review the value of the `data dictionary` key within [`ip/data_dic_field_mapping_config.yaml`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/ip/data_dic_field_mapping_config.yaml).
+3. Install the prerequisites libraries by running: `make deps`.
+4. Run `make install` to:
+
+<details>
+
+<summary>Expand for more details</summary>
 
 * Set up a dbt project and validate source DB connectivity.
 * Generate a dbt resource properties file (`_sources.yml`) using data from an input data dictionaries/metadata.
 * Recreate the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview).
 * Generate (dbt) SQL files in bulk either as: snapshots tables or incremental loads.
 
+</details>
+
 ---
 
-### How to Add a New Data Source if the dbt Project Already Exists
+### How to Add a New Data Source
 
-Note: a prerequisite to this step is for you to have previously run `make install` - i.e., for you to have already generated the template dbt project.
+If you've previously ran `make install` to generate the template dbt project, you can then do the following to add a new data source to your dbt project (click menu to expand):
 
-Assuming you have done this, do the following to add a new data source to your dbt project:
+<details>
+
+<summary>Expand for more details</summary>
 
 1. Update the `data_src` parameter within [`ip/config.yaml`](https://gitlab.com/wesfarmers-aac-engineers/data-engineering/wes-aac-dbt-accelerators/-/blob/main/ip/config.yaml) (underneath `general_params`) to reflect the data source you want to add.
 2. Upload an input data dictionary to the `ip` folder and ensure it matches the value of the `data dictionary` key within [`ip/data_dic_field_mapping_config.yaml`](https://gitlab.com/wesfarmers-aac-engineers/data-engineering/wes-aac-dbt-accelerators/-/blob/main/ip/data_dic_field_mapping_config.yaml) accordingly.
@@ -143,6 +187,8 @@ Assuming you have done this, do the following to add a new data source to your d
 * Generate a dbt resource properties file (`_sources.yml`) using data from an input data dictionaries/metadata.
 * Generate (dbt) SQL files in bulk either as: snapshots tables or incremental loads.
 * and import both of these into the previously generated dbt project.
+
+</details>
 
 ---
 
