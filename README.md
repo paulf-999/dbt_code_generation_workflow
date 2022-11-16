@@ -5,6 +5,7 @@ Automation scripts to accelerate dbt development, namely using code generation s
 1. Automate the dbt project setup process, designing the project to follow [dbt's recommended project structure](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview).
 2. Automate the creation of the dbt `_sources.yml` resource property file for a given data source.
 3. Generate (dbt) SQL files in bulk either as: `snapshots` tables or `incremental` loads.
+4. Use dbt `pre-commit` packages to ensure dbt standards and naming conventions are upheld (see `dbt-gloss` in `.pre-commit-config.yaml`).
 
 Doing this ensures that new dbt projects implement best practices from the off and removes much of the manual heavy lifting of dbt projects.
 
