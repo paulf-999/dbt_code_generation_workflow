@@ -90,17 +90,15 @@ def get_ips_for_table_level_metadata():
 def get_ips_for_src_properties():
     """Read input from config file for gen_source_properties.py"""
     data = read_ip_config_file()
-
     field_mapping_data = read_ip_field_mapping_data()
-
     env = data['general_params']['env']
-    data_src = data['data_src_params']['data_src']
-    src_snowflake_db = data['db_connection_params']['sf_src_db'].replace('${DATA_SRC}', data_src).replace('${ENV}', env)
-    src_db_schema = data['db_connection_params']['sf_src_db_schema']
 
+    # db-specific args for a data source
+    data_src_db_args = {}
+    data_src_db_args['data_src'] = data['data_src_params']['data_src']
+    data_src_db_args['src_sf_db'] = data['db_connection_params']['sf_src_db'].replace('${DATA_SRC}', data_src_db_args['data_src']).replace('${ENV}', env)  # noqa
+    data_src_db_args['src_db_schema'] = data['db_connection_params']['sf_src_db_schema']
     # data dictionary inputs
-    data_dictionary = field_mapping_data['data_dictionary'].replace('{data_src}', data_src)
-    target_op_src_filename = field_mapping_data['target_op_src_filename'].replace('{data_src}', data_src)
     data_src_tables = data['data_src_params']['data_src_tables']
 
     # the loop below just helps ensure the script is generic, regardless of the data_src
@@ -108,11 +106,18 @@ def get_ips_for_src_properties():
 
     for src, ip_tbls in data_src_tables.items():
         # only fetch the tables for the targeted data_src
-        if src.startswith(data_src) is True:
+        if src.startswith(data_src_db_args['data_src']) is True:
             for tbl in ip_tbls:
                 xls_sheet_names.append(tbl)
 
-    return env, data_src, src_snowflake_db, src_db_schema, data_dictionary, xls_sheet_names, target_op_src_filename
+    data_dictionary_args = {}
+    data_dictionary_args['data_dictionary'] = field_mapping_data['data_dictionary'].replace('{data_src}', data_src_db_args['data_src'])
+    data_dictionary_args['target_op_src_filename'] = field_mapping_data['target_op_src_filename'].replace('{data_src}', data_src_db_args['data_src'])
+    data_dictionary_args['xls_sheet_names'] = xls_sheet_names
+
+    logger.debug(f"data_src_db_args['data_src'] = {data_src_db_args['data_src']}")
+
+    return env, data_src_db_args, data_dictionary_args
 
 
 def get_data_dictionary_args():

@@ -155,7 +155,7 @@ gen_source_properties_file: get_ips
 	@echo "-----------------------------------------------------------------------"
 	@python3 py/gen_dbt_src_properties.py
 	@# create dir if not exists
-	@cp op/${DATA_SRC}/_${DATA_SRC}_source.yml ${DBT_PROJECT_NAME}/models/staging/${DBT_PROJECT_NAME}/
+	@cp op/${DATA_SRC}/_${DATA_SRC}_sources.yml ${DBT_PROJECT_NAME}/models/staging/${DBT_PROJECT_NAME}/
 
 gen_schema_w_codegen: get_ips
 	@echo "--------------------------------------------------------------------------------------"
