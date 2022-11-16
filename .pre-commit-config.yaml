@@ -26,7 +26,7 @@ repos:
       # - id: dbt-compile
       #   args: ["--cmd-flags", "++profiles-dir", "example_generated_dbt_project/profiles"]
       # - id: dbt-docs-generate
-      #   args: ["--cmd-flags", "++project-dir", "example_generated_dbt_project/",  "++profiles-dir", "example_generated_dbt_project/profiles"]
+      #   args: ["--cmd-flags", "++project-dir", "example_generated_dbt_project/",  "++profiles-dir", "example_generated_dbt_project/profiles"]  # yamllint disable-line
       # - id: check-source-table-has-description
       # # - id: check-model-columns-have-desc
       # # - id: check-model-has-all-columns
