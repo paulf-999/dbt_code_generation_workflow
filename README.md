@@ -125,7 +125,7 @@ In addition, for a breakdown of each of the input args used for the data diction
 
 * Set up a dbt project and validate source DB connectivity.
 * Generate a dbt resource properties file (`_sources.yml`) using data from an input data dictionaries/metadata.
-* Recreates the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview).
+* Recreate the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview).
 * Generate (dbt) SQL files in bulk either as: snapshots tables or incremental loads.
 
 ---
