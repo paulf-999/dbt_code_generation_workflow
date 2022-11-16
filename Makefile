@@ -158,13 +158,12 @@ gen_source_properties_file: get_ips
 	@cp op/${DATA_SRC}/_${DATA_SRC}_source.yml ${DBT_PROJECT_NAME}/models/staging/${DBT_PROJECT_NAME}/
 
 gen_schema_w_codegen: get_ips
-	# TODO: troubleshoot this
 	@echo "--------------------------------------------------------------------------------------"
 	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'gen_schema_w_codegen'. Generate the dbt schema.yml file using dbt-codegen.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "--------------------------------------------------------------------------------------"
-	cd ${DBT_PROJECT_NAME} && dbt run-operation generate_source --args '{"schema_name": "shared", "database_name": "${DATA_SRC}_dev", "name": "${DATA_SRC}", "generate_columns": "true", "include_descriptions": "true"}' --profiles-dir=profiles > schema.yml
+	cd ${DBT_PROJECT_NAME} && dbt run-operation generate_source --args '{"schema_name": "${SNOWFLAKE_SCHEMA}", "database_name": "${SNOWFLAKE_DB}", "name": "${SNOWFLAKE_SCHEMA}", "generate_columns": "true", "include_descriptions": "true"}' --profiles-dir=profiles > schema.yml
 	@echo -e "version: 2\n" > ${DBT_PROJECT_NAME}/models/schema.yml
-	@tail -n +5 ${DBT_PROJECT_NAME}/schema.yml >> ${DBT_PROJECT_NAME}/models/schema.yml
+	@tail -n +9 ${DBT_PROJECT_NAME}/schema.yml >> ${DBT_PROJECT_NAME}/models/schema.yml
 	@rm ${DBT_PROJECT_NAME}/schema.yml
 
 gen_dbt_sql_objs: get_ips
