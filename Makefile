@@ -8,7 +8,7 @@
 
 .PHONY = installations deps clean install get_ips initialise_dbt_project validate_src_db_connection install_packages gen_schema_w_codegen gen_dbt_sql_objs
 
-CONFIG_FILE := ip/config.yaml
+CONFIG_FILE := ip/config_mine.yaml
 # the 2 vars below are just for formatting CLI message output
 COLOUR_TXT_FMT_OPENING := \033[0;33m
 COLOUR_TXT_FMT_CLOSING := \033[0m
@@ -61,12 +61,6 @@ install: get_ips
 	@make -s gen_dbt_sql_objs
 	# Step 8: Change permissions of the dbt project folder. Otherwise you run into perms issues with the logs/ & target/ folders
 	@chmod -R 777 ${DBT_PROJECT_NAME}
-	# Step 9: Tmp (demo only) - copy over the the dbt project '${DBT_PROJECT_NAME}' to the Airflow DAGS repo
-	# NOTE: 'copy_dbt_project_to_af_dags_dir' is only used to accelerate local Airflow/dbt development. Consider commenting out the call
-	@make -s copy_dbt_project_to_af_dags_dir
-	@echo -e "\n------------------------------------------------------------------"
-	@echo "Finished! Check the newly created dbt project folder: '${DBT_PROJECT_NAME}'"
-	@echo -e "------------------------------------------------------------------\n"
 
 add_data_source: get_ips
 	@echo "------------------------------------------------------------------"
@@ -103,9 +97,6 @@ initialise_dbt_project: get_ips
 	dbt init ${DBT_PROJECT_NAME} --skip-profile-setup
 	@echo
 	# Step 2: copy profiles, macros & prereq dirs into dbt project folder
-	# TODO - delete the 2 lines below
-	@mkdir ${DBT_PROJECT_NAME}/models/${DBT_MODEL}
-	@mkdir ${DBT_PROJECT_NAME}/models/integration
 	@make -s copy_templates_into_dbt_project
 	@echo
 	# Step 3: Generate the profiles.yml, dbt_project.yml and README files
@@ -122,8 +113,7 @@ copy_templates_into_dbt_project: get_ips
 	@cp -r templates/template_dirs/docs/ ${DBT_PROJECT_NAME}/docs/
 	@cp -r templates/template_dirs/logs/ ${DBT_PROJECT_NAME}/logs/
 	@cp -r templates/template_dirs/macros/ ${DBT_PROJECT_NAME}/macros/
-	# TODO - remove integration from the below
-	@cp -r templates/template_dirs/models/ ${DBT_PROJECT_NAME}/models/integration
+	@cp -r templates/template_dirs/models/ ${DBT_PROJECT_NAME}/models/
 	@cp -r templates/template_dirs/profiles/ ${DBT_PROJECT_NAME}/profiles/
 	@cp -r templates/template_dirs/style_guides/ ${DBT_PROJECT_NAME}/style_guides/
 	@cp -r templates/template_dirs/target/ ${DBT_PROJECT_NAME}/target/
@@ -165,8 +155,6 @@ gen_source_properties_file: get_ips
 	@echo "-----------------------------------------------------------------------"
 	@python3 py/gen_dbt_src_properties.py
 	@# create dir if not exists
-	#@cp op/${DATA_SRC}/_${DATA_SRC}_source.yml ${DBT_PROJECT_NAME}/models/${DBT_MODEL}/
-	#TODO - uncomment the below & then delete the above
 	@cp op/${DATA_SRC}/_${DATA_SRC}_source.yml ${DBT_PROJECT_NAME}/models/staging/${DBT_PROJECT_NAME}/
 
 gen_schema_w_codegen: get_ips
@@ -192,9 +180,7 @@ gen_dbt_sql_objs: get_ips
 	@echo -e "${COLOUR_TXT_FMT_OPENING}# Generate sql for the 'incremental' layer.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "---------------------------------------------------------------"
 	@python3 py/gen_dbt_sql_objs.py incremental
-	@cp -R op/${DATA_SRC}/incremental/*.sql ${DBT_PROJECT_NAME}/models/staging/${DBT_PROJECT_NAME}/
-	#TODO - uncomment the below & then delete the above
-	#@cp -R op/${DATA_SRC}/incremental/*.sql ${DBT_PROJECT_NAME}/models/${DBT_MODEL}
+	@cp -R op/${DATA_SRC}/incremental/*.sql ${DBT_PROJECT_NAME}/models/staging/
 
 copy_dbt_project_to_af_dags_dir: get_ips
 	@echo "------------------------------------------------------------------------------------------"

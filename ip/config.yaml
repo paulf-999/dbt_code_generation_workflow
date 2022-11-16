@@ -1,30 +1,34 @@
 ---
 general_params:
   env: dev
-  abs_path_to_airflow2_dags: # e.g., <path-to>/airflow-v2-dags. Note: make sure you don't include a trailing backslash.
+  abs_path_to_airflow2_dags:  # e.g., <path-to>/airflow-v2-dags. Note: don't include a trailing backslash.
 db_connection_params:
-  sf_username: # e.g., jbloggs@email.com
+  sf_username:  # e.g., jbloggs@email.com
   sf_pass:
-  abs_path_to_snowflake_private_key: # e.g., /<abs-path-to->/rsa-key.p8
+  abs_path_to_snowflake_private_key:  # e.g., /<abs-path-to->/rsa-key.p8
   sf_account: <snowflake_account>.ap-southeast-2
-  sf_warehouse: # e.g., wh_svc_dbt_xs_${ENV}
-  sf_role: # e.g., svc_dbt_${ENV}
-  sf_src_db: # e.g., ${DATA_SRC}_${ENV}
-  sf_src_db_schema: # e.g., landed
-  sf_target_db_schema_snapshots: # to land the SDS layer objects
-  sf_target_db_schema_incremental: # e.g., 'incremental'
+  sf_warehouse:  # e.g., wh_svc_dbt_xs_${ENV}
+  sf_role:  # e.g., svc_dbt_${ENV}
+  sf_src_db:  # e.g., ${DATA_SRC}_${ENV}
+  sf_src_db_schema:  # e.g., landed
+  sf_target_db_schema_snapshots:  # to land the SDS layer objects
+  sf_target_db_schema_incremental:  # e.g., 'incremental'
 dbt_params:
   dbt_version: 1.2.0
-  dbt_project_name: # e.g., dbt_${DATA_SRC} # name of the dbt project. Must be snake_case, i.e., letters, digits and underscores only, and cannot start with a digit.
-  dbt_profile_name: # The profile your dbt project should use to connect to your data warehouse, must be snake_case.
-  # Recommendation, re dbt_profile_name: Often an organisation has only one data warehouse, so it makes sense to use your organisation's name as a profile name.
-  dbt_model: # target data model to land the generated SQL files
+  # dbt_project_name must be snake_case, i.e., letters, digits and underscores only, and cannot start with a digit.
+  dbt_project_name:  # e.g., dbt_${DATA_SRC}
+  dbt_profile_name:  # The profile your dbt project should use to connect to your data warehouse, must be snake_case.
+  # Recommendation - orgs often only have 1 DWH, so it makes sense to use your organisation's name as a profile name.
+  dbt_model:  # target data model to land the generated SQL files
 ip_metadata_file_params:
-  table_level_metadata: ip/table_level_metadata.xlsx # table-level metadata, used to capture the 'primary_key' & 'last_updated' for each src table across the data sources.
-  metadata_sheet_name: Sheet1 # XLS sheet name
+  # table-level metadata, used to capture the 'primary_key' & 'last_updated' for each src table across the data sources.
+  table_level_metadata: ip/table_level_metadata.xlsx
+  metadata_sheet_name: Sheet1  # XLS sheet name
 data_src_params:
-  data_src: # e.g. data_src_a
+  data_src:  # e.g. data_src_a
+  # this is a dbt opt-in feature for incremental models that instruct dbt on how to behave with schema changes.
+  on_schema_change_behaviour: append_new_columns
   data_src_tables:
-    data_src_a_src_tables: # data source source tables (used for the 2 .py generation scripts)
-    - table_a
-    - table_b
+    data_src_a_src_tables:  # data source source tables (used for the 2 .py generation scripts)
+      - table_a
+      - table_b
