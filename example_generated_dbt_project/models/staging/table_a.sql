@@ -1,6 +1,6 @@
 {{-
     config(
-        schema='None',
+        schema='incremental',
         materialized='incremental',
         on_schema_change='append_new_columns'
     )

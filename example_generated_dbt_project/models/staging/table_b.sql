@@ -1,6 +1,6 @@
 {{-
     config(
-        schema='None',
+        schema='incremental',
         materialized='incremental',
         on_schema_change='append_new_columns'
     )
@@ -15,5 +15,4 @@ FROM {{ ref('table_b_snapshot') }}
     SELECT MAX(landed_timestamp)
     FROM {{ this }}
   )
-
 {%- endif %}
