@@ -37,7 +37,7 @@ Designing the project to follow [dbt's recommended project structure](https://do
 <summary>Expand for more details</summary>
 
 * See `initialise_dbt_project` in the Makefile.
-* It does this by:
+* The target `initialise_dbt_project` automates the dbt project setup process by:
 
    * Populating the `dbt_project.yml` and `profiles.yml` files & verifying the connectivity.
    * Providing a template `packages.yml` to bundle the install of best-practice dbt packages, e.g.:
