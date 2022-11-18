@@ -4,7 +4,7 @@ macros:
   - name: generate_schema_name
     description: >
       'Override of the standard dbt macro 'generate_schema_name', to prevent dbt from attempting to create new schemas.
-      See: https://docs.getdbt.com/docs/building-a-dbt-project/building-models/using-custom-schemas#advanced-custom-schema-configuration.
+      See: https://docs.getdbt.com/docs/building-a-dbt-project/building-models/using-custom-schemas#advanced-custom-schema-configuration. # yamllint disable-line
     arguments:
       - name: custom_schema_name
         type: 'String'
@@ -28,8 +28,8 @@ macros:
 
   - name: limit_row_count
     description: >
-      'A [recommended best practice by dbt](https://docs.getdbt.com/guides/legacy/best-practices#pro-tips-for-dbt-projects),
-      this is a simple macro to apply a SQL limit command. Core use is to limit records selected whilst running pipelines in dev environments.
+      'A [recommended best practice by dbt](https://docs.getdbt.com/guides/legacy/best-practices#pro-tips-for-dbt-projects), # yamllint disable-line
+      this is a simple macro to apply a SQL limit command. Core use is to limit records selected whilst running pipelines in dev environments. # yamllint disable-line
     arguments:
       - name: row_count
         type: 'String'

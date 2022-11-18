@@ -1,0 +1,63 @@
+version: 2
+
+sources:
+  - name: production
+    description: ""
+    tables:
+      - name: brands
+        description: ""
+        columns:
+          - name: brand_id
+            description: ""
+          - name: brand_name
+            description: ""
+          - name: data_src
+            description: ""
+          - name: load_ts
+            description: ""
+
+      - name: categories
+        description: ""
+        columns:
+          - name: category_id
+            description: ""
+          - name: category_name
+            description: ""
+          - name: data_src
+            description: ""
+          - name: load_ts
+            description: ""
+
+      - name: products
+        description: ""
+        columns:
+          - name: product_id
+            description: ""
+          - name: product_name
+            description: ""
+          - name: brand_id
+            description: ""
+          - name: category_id
+            description: ""
+          - name: model_year
+            description: ""
+          - name: list_price
+            description: ""
+          - name: data_src
+            description: ""
+          - name: load_ts
+            description: ""
+
+      - name: stocks
+        description: ""
+        columns:
+          - name: store_id
+            description: ""
+          - name: product_id
+            description: ""
+          - name: quantity
+            description: ""
+          - name: data_src
+            description: ""
+          - name: load_ts
+            description: ""

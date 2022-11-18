@@ -19,10 +19,10 @@ A `Makefile` has been used to orchestrate the steps required to set up a dbt pro
   * Primary key is
   * and what the 'last_updated_field' is per table
 
-## 3. Generate the dbt 'source properties' file (`_source.yml`)
+## 3. Generate the dbt 'source properties' file (`_sources.yml`)
 
 * See `gen_source_properties_file` in the `Makefile`.
-* This step automates the creation of the dbt source properties file (i.e., `_source.yml`) for each data source, using the python script `py/gen_dbt_src_properties.py`.
+* This step automates the creation of the dbt source properties file (i.e., `_sources.yml`) for each data source, using the python script `py/gen_dbt_src_properties.py`.
 * A key prerequisite for this step is for the user to supply data dictionary type input file, to indicate (per table) at a field-level:
   * The field description
   * and flags to indicate whether the following 'generic' dbt test should be applied to the field:

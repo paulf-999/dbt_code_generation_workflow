@@ -8,7 +8,7 @@
 
 .PHONY = installations deps clean install get_ips initialise_dbt_project validate_src_db_connection install_packages gen_schema_w_codegen gen_dbt_sql_objs
 
-CONFIG_FILE := ip/config.yaml
+CONFIG_FILE := ip/config_mine.yaml
 # the 2 vars below are just for formatting CLI message output
 COLOUR_TXT_FMT_OPENING := \033[0;33m
 COLOUR_TXT_FMT_CLOSING := \033[0m
@@ -26,9 +26,11 @@ deps: get_ips
 	@echo "----------------------------------------------------------------------------------------------------------------------"
 	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'deps'. Download the relevant pip package dependencies (note: ignore the pip depedency resolver errors.)${COLOUR_TXT_FMT_CLOSING}"
 	@echo "----------------------------------------------------------------------------------------------------------------------"
-	@pip3 install -q -r requirements.txt
-	@pip3 uninstall keyring -qy && pip3 install keyring -q # there is a module conflict here that otherwise throws a warning
-	@pip3 install --upgrade dbt-snowflake==${DBT_VERSION} -q
+	@virtualenv -p python3 venv; \
+	source venv/bin/activate; \
+	pip3 install -r requirements.txt; \
+	pip3 install --upgrade dbt-snowflake==${DBT_VERSION} -q
+
 
 #############################################################################################
 # 'install' & 'add_data_source' are the two main routines of this Makefile
@@ -59,12 +61,6 @@ install: get_ips
 	@make -s gen_dbt_sql_objs
 	# Step 8: Change permissions of the dbt project folder. Otherwise you run into perms issues with the logs/ & target/ folders
 	@chmod -R 777 ${DBT_PROJECT_NAME}
-	# Step 9: Tmp (demo only) - copy over the the dbt project '${DBT_PROJECT_NAME}' to the Airflow DAGS repo
-	# NOTE: 'copy_dbt_project_to_af_dags_dir' is only used to accelerate local Airflow/dbt development. Consider commenting out the call
-	@make -s copy_dbt_project_to_af_dags_dir
-	@echo -e "\n------------------------------------------------------------------"
-	@echo "Finished! Check the newly created dbt project folder: '${DBT_PROJECT_NAME}'"
-	@echo -e "------------------------------------------------------------------\n"
 
 add_data_source: get_ips
 	@echo "------------------------------------------------------------------"
@@ -101,9 +97,6 @@ initialise_dbt_project: get_ips
 	dbt init ${DBT_PROJECT_NAME} --skip-profile-setup
 	@echo
 	# Step 2: copy profiles, macros & prereq dirs into dbt project folder
-	# TODO - delete the 2 lines below
-	@mkdir ${DBT_PROJECT_NAME}/models/${DBT_MODEL}
-	@mkdir ${DBT_PROJECT_NAME}/models/integration
 	@make -s copy_templates_into_dbt_project
 	@echo
 	# Step 3: Generate the profiles.yml, dbt_project.yml and README files
@@ -120,8 +113,7 @@ copy_templates_into_dbt_project: get_ips
 	@cp -r templates/template_dirs/docs/ ${DBT_PROJECT_NAME}/docs/
 	@cp -r templates/template_dirs/logs/ ${DBT_PROJECT_NAME}/logs/
 	@cp -r templates/template_dirs/macros/ ${DBT_PROJECT_NAME}/macros/
-	# TODO - remove integration from the below
-	@cp -r templates/template_dirs/models/ ${DBT_PROJECT_NAME}/models/integration
+	@cp -r templates/template_dirs/models/ ${DBT_PROJECT_NAME}/models/
 	@cp -r templates/template_dirs/profiles/ ${DBT_PROJECT_NAME}/profiles/
 	@cp -r templates/template_dirs/style_guides/ ${DBT_PROJECT_NAME}/style_guides/
 	@cp -r templates/template_dirs/target/ ${DBT_PROJECT_NAME}/target/
@@ -163,18 +155,15 @@ gen_source_properties_file: get_ips
 	@echo "-----------------------------------------------------------------------"
 	@python3 py/gen_dbt_src_properties.py
 	@# create dir if not exists
-	#@cp op/${DATA_SRC}/_${DATA_SRC}_source.yml ${DBT_PROJECT_NAME}/models/${DBT_MODEL}/
-	#TODO - uncomment the below & then delete the above
-	@cp op/${DATA_SRC}/_${DATA_SRC}_source.yml ${DBT_PROJECT_NAME}/models/staging/${DBT_PROJECT_NAME}/
+	@cp op/${DATA_SRC}/_${DATA_SRC}_sources.yml ${DBT_PROJECT_NAME}/models/staging/${DBT_PROJECT_NAME}/
 
 gen_schema_w_codegen: get_ips
-	# TODO: troubleshoot this
 	@echo "--------------------------------------------------------------------------------------"
 	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'gen_schema_w_codegen'. Generate the dbt schema.yml file using dbt-codegen.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "--------------------------------------------------------------------------------------"
-	cd ${DBT_PROJECT_NAME} && dbt run-operation generate_source --args '{"schema_name": "shared", "database_name": "${DATA_SRC}_dev", "name": "${DATA_SRC}", "generate_columns": "true", "include_descriptions": "true"}' --profiles-dir=profiles > schema.yml
+	cd ${DBT_PROJECT_NAME} && dbt run-operation generate_source --args '{"schema_name": "${SNOWFLAKE_SCHEMA}", "database_name": "${SNOWFLAKE_DB}", "name": "${SNOWFLAKE_SCHEMA}", "generate_columns": "true", "include_descriptions": "true"}' --profiles-dir=profiles > schema.yml
 	@echo -e "version: 2\n" > ${DBT_PROJECT_NAME}/models/schema.yml
-	@tail -n +5 ${DBT_PROJECT_NAME}/schema.yml >> ${DBT_PROJECT_NAME}/models/schema.yml
+	@tail -n +9 ${DBT_PROJECT_NAME}/schema.yml >> ${DBT_PROJECT_NAME}/models/schema.yml
 	@rm ${DBT_PROJECT_NAME}/schema.yml
 
 gen_dbt_sql_objs: get_ips
@@ -190,9 +179,7 @@ gen_dbt_sql_objs: get_ips
 	@echo -e "${COLOUR_TXT_FMT_OPENING}# Generate sql for the 'incremental' layer.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "---------------------------------------------------------------"
 	@python3 py/gen_dbt_sql_objs.py incremental
-	@cp -R op/${DATA_SRC}/incremental/*.sql ${DBT_PROJECT_NAME}/models/staging/${DBT_PROJECT_NAME}/
-	#TODO - uncomment the below & then delete the above
-	#@cp -R op/${DATA_SRC}/incremental/*.sql ${DBT_PROJECT_NAME}/models/${DBT_MODEL}
+	@cp -R op/${DATA_SRC}/incremental/*.sql ${DBT_PROJECT_NAME}/models/staging/
 
 copy_dbt_project_to_af_dags_dir: get_ips
 	@echo "------------------------------------------------------------------------------------------"
@@ -239,7 +226,6 @@ get_ips:
 	@echo "------------------------------------------------------------------"
 	@# general params
 	$(eval ENV=$(shell yq -r '.general_params.env | select( . != null )' ${CONFIG_FILE}))
-	$(eval AF2_DAGS_PATH=$(shell yq -r '.general_params.abs_path_to_airflow2_dags | select( . != null )' ${CONFIG_FILE}))
 	$(eval DATA_SRC=$(shell yq -r '.data_src_params.data_src | select( . != null )' ${CONFIG_FILE}))
 	@# db_connection params
 	$(eval SNOWFLAKE_USERNAME=$(shell yq -r '.db_connection_params.sf_username | select( . != null )' ${CONFIG_FILE}))
@@ -273,5 +259,3 @@ validate_user_ip: get_ips
 	@[ "${DBT_PROJECT_NAME}" ] || ( echo -e "\nError: 'dbt_project_name' key is empty in ip/config.yaml\n"; exit 1 )
 	@# INFO: 5) Verify the user has provided a value for the key 'dbt_profile_name' in ip/config.yaml
 	@[ "${DBT_PROFILE_NAME}" ] || ( echo -e "\nError: 'dbt_profile_name' key is empty in ip/config.yaml\n"; exit 1 )
-	@# INFO: 6) Verify the user has provided a value for the key 'abs_path_to_airflow2_dags' in ip/config.yaml
-	#@[ "${AF2_DAGS_PATH}" ] || ( echo -e "\nError: 'abs_path_to_airflow2_dags' key is empty in ip/config.yaml\n"; exit 1 )

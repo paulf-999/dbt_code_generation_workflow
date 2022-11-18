@@ -7,7 +7,6 @@ Described below are the input config parameters read in from `ip/config.yaml` by
 | Parameter | Description | Example                  |
 | --------- | ---------------------------- | ------- |
 | env | Name of the environment | `dev` |
-| abs_path_to_airflow2_dags | The absolute filepath to the Airflow dags repo on your filesystem | `/home/<user>/<git_repos_link>/airflow-v2-dags` |
 
 ## DB Connection Parameters
 
