@@ -20,15 +20,18 @@ repos:
     hooks:
       - id: yamllint
         args: [-c=.yamllint]
-        #  - repo: https://github.com/Montreal-Analytics/dbt-gloss
-        #    rev: 1.0.1  # used to ensure that our dbt standards are upheld
-        #    hooks:
-        #      - id: dbt-docs-generate
-        #      - id: check-source-table-has-description
-        #      - id: check-model-columns-have-desc
-        #      - id: check-model-has-all-columns
-        #      - id: check-model-has-tests
-        #        args: ["--test-cnt", "2", "--"]
+    # - repo: https://github.com/Montreal-Analytics/dbt-gloss
+    # rev: 1.0.1  # used to ensure that our dbt standards are upheld
+    # hooks:
+      # - id: dbt-compile
+      #   args: ["--cmd-flags", "++profiles-dir", "example_generated_dbt_project/profiles"]
+      # - id: dbt-docs-generate
+      #   args: ["--cmd-flags", "++project-dir", "example_generated_dbt_project/",  "++profiles-dir", "example_generated_dbt_project/profiles"]  # yamllint disable-line
+      # - id: check-source-table-has-description
+      # # - id: check-model-columns-have-desc
+      # # - id: check-model-has-all-columns
+      # - id: check-source-has-tests
+      #  args: ["--manifest", "example_generated_dbt_project/target/manifest.json"]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.2.0
