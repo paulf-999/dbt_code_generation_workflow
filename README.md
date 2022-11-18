@@ -7,9 +7,9 @@ Automation scripts to accelerate dbt development, namely using code generation s
 3. Generate (dbt) SQL files in bulk either as: `snapshots` tables or `incremental` loads.
 4. Use dbt `pre-commit` packages to ensure dbt standards and naming conventions are upheld (see `dbt-gloss` in `.pre-commit-config.yaml`).
 
-Doing this ensures that new dbt projects implement best practices from the off and removes much of the manual heavy lifting of dbt projects.
+Doing this ensures that new dbt projects implement best practices from the off and removes much of the manual heavy lifting of dbt projects. See [example_generated_dbt_project](https://github.com/paulf-999/dbt_code_generation_workflow/tree/feature/dbt_gloss/example_generated_dbt_project) as an example dbt project generated using these scripts.
 
-See [example_generated_dbt_project](https://github.com/paulf-999/dbt_code_generation_workflow/tree/feature/dbt_gloss/example_generated_dbt_project) as an example dbt project generated using these scripts.
+Note, re: steps 2 and 3 - there's also a routine to add new data sources to an existing dbt project. For more details, see the section below 'How to Add a New Data Source'.
 
 ---
 
