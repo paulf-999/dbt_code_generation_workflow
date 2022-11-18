@@ -49,8 +49,8 @@ It does this by:
   * `is_table_empty`
 * Include additional dbt macros, e.g.:
   * `limit_row_count` - custom macro to limit row counts when in lower (e.g., dev) environments
-  * `generate_schema_name` - commonly revised dbt macro
   * `grant_select_on_schemas` - dbt-recommended macro to grant access to all tables in a schema
+  * `generate_schema_name` - commonly revised dbt macro
   * And recreate the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview), as shown below:
 
 <details>
