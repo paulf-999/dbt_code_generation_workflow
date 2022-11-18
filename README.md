@@ -7,9 +7,9 @@ Automation scripts to accelerate dbt development, namely using code generation s
 3. Generate (dbt) SQL files in bulk either as: `snapshots` tables or `incremental` loads.
 4. Use dbt `pre-commit` packages to ensure dbt standards and naming conventions are upheld (see `dbt-gloss` in `.pre-commit-config.yaml`).
 
-Doing this ensures that new dbt projects implement best practices from the off and removes much of the manual heavy lifting of dbt projects.
+Doing this ensures that new dbt projects implement best practices from the off and removes much of the manual heavy lifting of dbt projects. See [example_generated_dbt_project](https://github.com/paulf-999/dbt_code_generation_workflow/tree/feature/dbt_gloss/example_generated_dbt_project) as an example dbt project generated using these scripts.
 
-See [example_generated_dbt_project](https://github.com/paulf-999/dbt_code_generation_workflow/tree/feature/dbt_gloss/example_generated_dbt_project) as an example dbt project generated using these scripts.
+Note, re: steps 2 and 3 - there's also a routine to add new data sources to an existing dbt project. For more details, see the section below 'How to Add a New Data Source'.
 
 ---
 
@@ -36,23 +36,24 @@ Designing the project to follow [dbt's recommended project structure](https://do
 
 <summary>Expand for more details</summary>
 
-It does this by:
+* See `initialise_dbt_project` in the Makefile.
+* The target `initialise_dbt_project` automates the dbt project setup process by:
 
-* Populating the `dbt_project.yml` and `profiles.yml` files & verifying the connectivity.
-* Providing a template `packages.yml` to bundle the install of best-practice dbt packages, e.g.:
-  * `dbt_utils`
-  * `dbt_expectations`
-  * `dbt-codegen`
-  * `dbt-project-evaluator`
-* Include additional (generic) dbt source tests, e.g.:
-  * `raw_table_existence`
-  * `is_table_empty`
-* Include additional dbt macros, e.g.:
-  * `limit_row_count` - custom macro to limit row counts when in lower (e.g., dev) environments
-  * `grant_select_on_schemas` - dbt-recommended macro to grant access to all tables in a schema
-  * `generate_schema_name` - commonly revised dbt macro
-  * And recreate the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview), as shown below:
-
+   * Populating the `dbt_project.yml` and `profiles.yml` files & verifying the connectivity.
+   * Providing a template `packages.yml` to bundle the install of best-practice dbt packages, e.g.:
+     * `dbt_utils`
+     * `dbt_expectations`
+     * `dbt-codegen`
+     * `dbt-project-evaluator`
+   * Include additional (generic) dbt source tests, e.g.:
+     * `raw_table_existence`
+     * `is_table_empty`
+   * Include additional dbt macros, e.g.:
+     * `limit_row_count` - custom macro to limit row counts when in lower (e.g., dev) environments
+     * `generate_schema_name` - commonly revised dbt macro
+     * `grant_select_on_schemas` - dbt-recommended macro to grant access to all tables in a schema
+     * And recreate the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview), as shown below:
+     
 <details>
 
 <summary>Click to show target dbt project structure</summary>
