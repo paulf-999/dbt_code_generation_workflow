@@ -36,7 +36,7 @@ Designing the project to follow [dbt's recommended project structure](https://do
 
 <summary>Expand for more details</summary>
 
-* See initialise_dbt_project in the Makefile.
+* See `initialise_dbt_project` in the Makefile.
 * It does this by:
 
    * Populating the `dbt_project.yml` and `profiles.yml` files & verifying the connectivity.
