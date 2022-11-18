@@ -17,10 +17,8 @@ Note, re: steps 2 and 3 - there's also a routine to add new data sources to an e
 
 1. Goal
 2. How to Run
-   1. Prerequisites
-   2. Steps
-   3. How to Add a New Data Source
-3. Implementation Details
+3. How to Add a New Data Source
+4. Implementation Details
 
 ---
 
@@ -176,7 +174,7 @@ pre-commit install
 
 ---
 
-### How to Add a New Data Source
+## 3. How to Add a New Data Source
 
 If you've previously ran `make install` to generate the template dbt project, you can then do the following to add a new data source to your dbt project (click menu to expand):
 
@@ -196,6 +194,6 @@ If you've previously ran `make install` to generate the template dbt project, yo
 
 ---
 
-## 3. Implementation Details
+## 4. Implementation Details
 
 See [docs/implementation_details.md](docs/implementation_details.md).
