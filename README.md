@@ -36,22 +36,23 @@ Designing the project to follow [dbt's recommended project structure](https://do
 
 <summary>Expand for more details</summary>
 
-It does this by:
+* See initialise_dbt_project in the Makefile.
+* It does this by:
 
-* Populating the `dbt_project.yml` and `profiles.yml` files & verifying the connectivity.
-* Providing a template `packages.yml` to bundle the install of best-practice dbt packages, e.g.:
-  * `dbt_utils`
-  * `dbt_expectations`
-  * `dbt-codegen`
-  * `dbt-project-evaluator`
-* Include additional (generic) dbt source tests, e.g.:
-  * `raw_table_existence`
-  * `is_table_empty`
-* Include additional dbt macros, e.g.:
-  * `limit_row_count` - custom macro to limit row counts when in lower (e.g., dev) environments
-  * `generate_schema_name` - commonly revised dbt macro
-  * `grant_select_on_schemas` - dbt-recommended macro to grant access to all tables in a schema
-  * And recreate the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview), as shown below:
+   * Populating the `dbt_project.yml` and `profiles.yml` files & verifying the connectivity.
+   * Providing a template `packages.yml` to bundle the install of best-practice dbt packages, e.g.:
+     * `dbt_utils`
+     * `dbt_expectations`
+     * `dbt-codegen`
+     * `dbt-project-evaluator`
+   * Include additional (generic) dbt source tests, e.g.:
+     * `raw_table_existence`
+     * `is_table_empty`
+   * Include additional dbt macros, e.g.:
+     * `limit_row_count` - custom macro to limit row counts when in lower (e.g., dev) environments
+     * `generate_schema_name` - commonly revised dbt macro
+     * `grant_select_on_schemas` - dbt-recommended macro to grant access to all tables in a schema
+     * And recreate the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview), as shown below:
 
 <details>
 
