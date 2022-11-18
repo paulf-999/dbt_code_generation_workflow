@@ -53,7 +53,7 @@ Designing the project to follow [dbt's recommended project structure](https://do
      * `generate_schema_name` - commonly revised dbt macro
      * `grant_select_on_schemas` - dbt-recommended macro to grant access to all tables in a schema
      * And recreate the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview), as shown below:
-
+     
 <details>
 
 <summary>Click to show target dbt project structure</summary>
