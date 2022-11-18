@@ -151,7 +151,8 @@ pre-commit install
 * Ensure you provide values for each of the keys in [`ip/config.yaml`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/ip/config.yaml).
   * For a description breakdown of each of the input args, see [`ip/README.md`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/ip/README.md).
 * Review the input args used for the data dictionary field mapping args,
-  * If you used the template data dictionary file, no changes will be required. For more details, see [`ip/data_dic_field_mapping_prereqs.md`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/ip/data_dic_field_mapping_prereqs.md).
+  * If you used the template data dictionary file, no changes will be required.
+  * For more details, see [`ip/data_dic_field_mapping_prereqs.md`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/ip/data_dic_field_mapping_prereqs.md).
 
 ### Steps
 
@@ -165,7 +166,7 @@ pre-commit install
 
 <summary>Expand for more details</summary>
 
-* Set up a dbt project and validate source DB connectivity.
+* Set up a dbt project, designing the project th follow [dbt's recommended project structure](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview) and validate source DB connectivity.
 * Generate a dbt resource properties file (`_sources.yml`) using data from an input data dictionaries/metadata.
 * Recreate the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview).
 * Generate (dbt) SQL files in bulk either as: snapshots tables or incremental loads.
