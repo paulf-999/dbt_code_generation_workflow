@@ -28,9 +28,9 @@ Note, re: steps 2 and 3 - there's also a routine to add new data sources to an e
 
 The goal of these scripts is to accelerate dbt development through the use of code generation scripts. These scripts look to:
 
-### i. Automate the dbt Project Setup Process
+**Automate the dbt Project Setup Process**
 
-Designing the project to follow [dbt's recommended project structure](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview) and implement best practices. Expand the menu below for more details.
+As well as automating the dbt project setup, the project is designed to follow [dbt's recommended project structure](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview) and implement best practices. Expand the menu below for more details.
 
 <details>
 
@@ -53,7 +53,7 @@ Designing the project to follow [dbt's recommended project structure](https://do
      * `generate_schema_name` - commonly revised dbt macro
      * `grant_select_on_schemas` - dbt-recommended macro to grant access to all tables in a schema
      * And recreate the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview), as shown below:
-     
+
 <details>
 
 <summary>Click to show target dbt project structure</summary>
@@ -105,7 +105,7 @@ ${DBT_PROJECT_NAME}
 
 </details>
 
-### ii. Automate the creation of the dbt `_sources.yml` resource property file for a given data source
+**Automate the creation of the dbt `_sources.yml` resource property file for a given data source**
 
 <details>
 
@@ -123,7 +123,7 @@ ${DBT_PROJECT_NAME}
 
 </details>
 
-### iii. Generate (dbt) sql files in bulk that use the [`snapshot`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/templates/jinja_templates/snapshot.sql.j2) and [`incremental`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/templates/jinja_templates/incremental.sql.j2) patterns
+**Generate (dbt) sql files in bulk that use the [`snapshot`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/templates/jinja_templates/snapshot.sql.j2) and [`incremental`](https://github.com/paulf-999/dbt_code_generation_workflow/blob/main/templates/jinja_templates/incremental.sql.j2) patterns**
 
 <details>
 

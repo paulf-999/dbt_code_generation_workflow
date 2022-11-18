@@ -5,3 +5,4 @@ exclude_rule 'MD013' # Max line length
 exclude_rule 'MD029' # Ordered list item prefix
 exclude_rule 'MD033' # Allow Inline HTML
 exclude_rule 'MD034' # Bare URL
+exclude_rule 'MD036' # Emphasis used instead of a header
