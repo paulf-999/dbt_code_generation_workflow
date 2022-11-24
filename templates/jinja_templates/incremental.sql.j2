@@ -6,6 +6,10 @@
     )
 -{{ '}}' }}
 
+-- 'on_schema_change' is a dbt opt-in feature that instructs dbt on how to behave with schema changes.
+-- note: this setting does not remove columns from the existing table that are not present in the new data.
+-- See the following for more details: https://docs.getdbt.com/docs/build/incremental-models#what-if-the-columns-of-my-incremental-model-changes
+
 SELECT *
 FROM {{ '{{' }} ref('{{ src_tbl_name }}_snapshot') {{ '}}' }}
 
