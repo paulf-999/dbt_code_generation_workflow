@@ -18,7 +18,8 @@ Note, re: steps 2 and 3 - there's also a routine to add new data sources to an e
 1. Goal
 2. How to Run
 3. How to Add a New Data Source
-4. Implementation Details
+4. Dagrules
+5. Implementation Details
 
 ---
 
@@ -195,6 +196,14 @@ If you've previously ran `make install` to generate the template dbt project, yo
 
 ---
 
-## 4. Implementation Details
+## 4. Dagrules
+
+The python package [`dagrules`](https://pypi.org/project/dagrules/) in installed as part of the build script. To use it, enter `dagrules --check`.
+
+To see what checks are performed by dagrules, check out [templates/dagrules.yml](templates/dagrules.yml).
+
+---
+
+## 5. Implementation Details
 
 See [docs/implementation_details.md](docs/implementation_details.md).

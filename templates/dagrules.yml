@@ -1,5 +1,5 @@
 ---
-version: '1'
+version: 2
 
 rules:
   - name: All models must be tagged either snapshot, base, staging, intermediate, core, mart
