@@ -118,6 +118,7 @@ copy_templates_into_dbt_project: get_ips
 	@cp -r templates/template_dirs/style_guides/ ${DBT_PROJECT_NAME}/style_guides/
 	@cp -r templates/template_dirs/target/ ${DBT_PROJECT_NAME}/target/
 	@cp -r templates/template_dirs/tests/ ${DBT_PROJECT_NAME}/tests/
+	@cp templates/dagrules.yml ${DBT_PROJECT_NAME}/
 	@cp templates/packages.yml ${DBT_PROJECT_NAME}
 	@cp -f templates/.gitignore ${DBT_PROJECT_NAME}
 	@cp templates/.pre-commit-config.yaml ${DBT_PROJECT_NAME}
