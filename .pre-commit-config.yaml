@@ -27,7 +27,7 @@ repos:
       - id: dbt-docs-generate
         args: ["--cmd-flags", "++project-dir", "example_generated_dbt_project/",  "++profiles-dir", "example_generated_dbt_project/profiles"]  # yamllint disable-line
       - id: check-source-has-tests-by-name
-        args: ["--manifest", "example_generated_dbt_project/target/manifest.json", "--tests", "unique=1", "not_null=2", "--"]
+        args: ["--manifest", "example_generated_dbt_project/target/manifest.json", "--tests", "unique=1", "not_null=1", "--"]
       - id: check-source-table-has-description
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
