@@ -49,7 +49,6 @@ The SQLFluff configuration rules that come ‘out of the box’ have been overwr
 [sqlfluff]
 dialect = snowflake
 templater = jinja
-#-----------------------------------------------------------------------------------
 runaway_limit = 10 # Number of passes to run before admitting defeat
 max_line_length = 120
 sql_file_exts = .sql,.sql.j2,.dml,.ddl
@@ -65,17 +64,21 @@ indented_joins = true
 indented_using_on = true
 template_blocks_indent = true
 
+#-----------------------------------------------------------------------------------
 # Comma rules
+#-----------------------------------------------------------------------------------
 [sqlfluff:layout:type:comma]
 line_position = leading
 [sqlfluff:rules:convention.select_trailing_comma]  # trailing commas within select clauses
 select_clause_trailing_comma = forbid
 
+#-----------------------------------------------------------------------------------
 # Capitalisation rules
+#-----------------------------------------------------------------------------------
 [sqlfluff:rules:capitalisation.keywords]  # Inconsistent capitalisation of keywords.
 capitalisation_policy = upper
-[sqlfluff:rules:capitalisation.identifiers] # Unquoted identifiers.
-extended_capitalisation_policy = upper
+[sqlfluff:rules:capitalisation.identifiers] # Inconsistent column, table, CTE & other names
+extended_capitalisation_policy = consistent
 ignore_words = None
 [sqlfluff:rules:capitalisation.functions]  # Inconsistent capitalisation of function names.
 extended_capitalisation_policy = upper
