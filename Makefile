@@ -1,4 +1,8 @@
-# Usage:
+SHELL = /bin/sh
+
+#================================================================
+# Usage
+#================================================================
 # make installations	# install the package for the first time, managing dependencies & performing a housekeeping cleanup too
 # make deps		# just install the dependencies
 # make install		# perform the end-to-end install
@@ -6,25 +10,25 @@
 
 .EXPORT_ALL_VARIABLES:
 
-.PHONY = installations deps clean install get_ips initialise_dbt_project validate_src_db_connection install_packages gen_schema_w_codegen gen_dbt_sql_objs
+.PHONY: installations deps clean install get_ips initialise_dbt_project validate_src_db_connection install_packages gen_schema_w_codegen gen_dbt_sql_objs
 
 CONFIG_FILE := ip/config_mine.yaml
 # the 2 vars below are just for formatting CLI message output
-COLOUR_TXT_FMT_OPENING := \033[0;33m
-COLOUR_TXT_FMT_CLOSING := \033[0m
+YELLOW := \033[0;33m
+COLOUR_OFF := \033[0m
 
 installations: clean deps install
 
 clean: get_ips
 	@echo "------------------------------------------------------------------"
-	@echo "${COLOUR_TXT_FMT_OPENING}Target 'clean'. Remove any redundant files, e.g. downloads.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "${YELLOW}Target 'clean'. Remove any redundant files, e.g. downloads.${COLOUR_OFF}"
 	@echo "------------------------------------------------------------------"
 	@# remove any dbt project files if they already exist
 	@rm -rf ${DBT_PROJECT_NAME}
 
 deps: get_ips
 	@echo "----------------------------------------------------------------------------------------------------------------------"
-	@echo "${COLOUR_TXT_FMT_OPENING}Target: 'deps'. Download the relevant pip package dependencies (note: ignore the pip depedency resolver errors.)${COLOUR_TXT_FMT_CLOSING}"
+	@echo "${YELLOW}Target: 'deps'. Download the relevant pip package dependencies (note: ignore the pip depedency resolver errors.)${COLOUR_OFF}"
 	@echo "----------------------------------------------------------------------------------------------------------------------"
 	@virtualenv -p python3 venv; \
 	source venv/bin/activate; \
@@ -37,7 +41,7 @@ deps: get_ips
 #############################################################################################
 install: get_ips
 	@echo "------------------------------------------------------------------"
-	@echo "${COLOUR_TXT_FMT_OPENING}Target: 'install'. Run the setup and install targets.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "${YELLOW}Target: 'install'. Run the setup and install targets.${COLOUR_OFF}"
 	@echo "------------------------------------------------------------------"
 	# Step 1:  Validate user inputs
 	@make -s validate_user_ip
@@ -64,7 +68,7 @@ install: get_ips
 
 add_data_source: get_ips
 	@echo "------------------------------------------------------------------"
-	@echo "${COLOUR_TXT_FMT_OPENING}Target: 'add_data_source'. Use this to add a new data source to your dbt project.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "${YELLOW}Target: 'add_data_source'. Use this to add a new data source to your dbt project.${COLOUR_OFF}"
 	@echo "------------------------------------------------------------------"
 	# validate the target dbt project exists
 	@if [ ! -d "${DBT_PROJECT_NAME}" ]; then echo -e "\nError: Target dbt project '${DBT_PROJECT_NAME}' does not exist.\n"; exit 1; fi
@@ -89,7 +93,7 @@ add_data_source: get_ips
 #############################################################################################
 initialise_dbt_project: get_ips
 	@echo "------------------------------------------------------------------"
-	@echo "${COLOUR_TXT_FMT_OPENING}Target: 'initialise_dbt_project'. Initialise the dbt project.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "${YELLOW}Target: 'initialise_dbt_project'. Initialise the dbt project.${COLOUR_OFF}"
 	@echo "------------------------------------------------------------------"
 	@[ "${DBT_PROJECT_NAME}" ] || ( echo "\nError: DBT_PROJECT_NAME variable is not set\n"; exit 1 )
 	# Step 1: Initialise the dbt project. dbt project name = '${DBT_PROJECT_NAME}'.
@@ -130,20 +134,20 @@ copy_templates_into_dbt_project: get_ips
 #############################################################################################
 validate_src_db_connection: get_ips
 	@echo "-----------------------------------------------------------------------"
-	@echo "${COLOUR_TXT_FMT_OPENING}Target: 'validate_src_db_connection'. Verify connection to the source DB.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "${YELLOW}Target: 'validate_src_db_connection'. Verify connection to the source DB.${COLOUR_OFF}"
 	@echo "-----------------------------------------------------------------------"
 	@echo
 	cd ${DBT_PROJECT_NAME} && dbt debug --profiles-dir=profiles --profile=${DBT_PROFILE_NAME}
 
 install_packages: get_ips
 	@echo "------------------------------------------------------------------"
-	@echo "${COLOUR_TXT_FMT_OPENING}Target: 'install_packages'. Install the desired dbt packages.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "${YELLOW}Target: 'install_packages'. Install the desired dbt packages.${COLOUR_OFF}"
 	@echo "------------------------------------------------------------------"
 	@cd ${DBT_PROJECT_NAME} && dbt deps --profiles-dir=profiles
 
 run_model: get_ips
 	@echo "------------------------------------------------------------------"
-	@echo "${COLOUR_TXT_FMT_OPENING}Target: 'run_model'. Run the dbt model.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "${YELLOW}Target: 'run_model'. Run the dbt model.${COLOUR_OFF}"
 	@echo "------------------------------------------------------------------"
 	@cd ${DBT_PROJECT_NAME} && dbt run --profiles-dir profiles --models ${DBT_MODEL}
 
@@ -152,7 +156,7 @@ run_model: get_ips
 #############################################################################################
 gen_source_properties_file: get_ips
 	@echo "-----------------------------------------------------------------------"
-	@echo "${COLOUR_TXT_FMT_OPENING}Target: 'gen_source_properties_file'. Generate the dbt source.yml (source properties) file.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "${YELLOW}Target: 'gen_source_properties_file'. Generate the dbt source.yml (source properties) file.${COLOUR_OFF}"
 	@echo "-----------------------------------------------------------------------"
 	@python3 py/gen_dbt_src_properties.py
 	@# create dir if not exists
@@ -160,7 +164,7 @@ gen_source_properties_file: get_ips
 
 gen_schema_w_codegen: get_ips
 	@echo "--------------------------------------------------------------------------------------"
-	@echo "${COLOUR_TXT_FMT_OPENING}Target: 'gen_schema_w_codegen'. Generate the dbt schema.yml file using dbt-codegen.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "${YELLOW}Target: 'gen_schema_w_codegen'. Generate the dbt schema.yml file using dbt-codegen.${COLOUR_OFF}"
 	@echo "--------------------------------------------------------------------------------------"
 	cd ${DBT_PROJECT_NAME} && dbt run-operation generate_source --args '{"schema_name": "${SNOWFLAKE_SCHEMA}", "database_name": "${SNOWFLAKE_DB}", "name": "${SNOWFLAKE_SCHEMA}", "generate_columns": "true", "include_descriptions": "true"}' --profiles-dir=profiles > schema.yml
 	@echo "version: 2\n" > ${DBT_PROJECT_NAME}/models/schema.yml
@@ -169,22 +173,22 @@ gen_schema_w_codegen: get_ips
 
 gen_dbt_sql_objs: get_ips
 	@echo "-------------------------------------------------------------------------------------------"
-	@echo "${COLOUR_TXT_FMT_OPENING}Target: 'gen_dbt_sql_objs'. Generate snapshot/incremental .sql files using Jinja templates.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "${YELLOW}Target: 'gen_dbt_sql_objs'. Generate snapshot/incremental .sql files using Jinja templates.${COLOUR_OFF}"
 	@echo "-------------------------------------------------------------------------------------------"
-	@echo "${COLOUR_TXT_FMT_OPENING}# Generate sql for the 'snapshots' layer.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "${YELLOW}# Generate sql for the 'snapshots' layer.${COLOUR_OFF}"
 	@echo "---------------------------------------------------------------"
 	@python3 py/gen_dbt_sql_objs.py snapshot
 	@echo "---------------------------------------------------------------"
 	@mkdir ${DBT_PROJECT_NAME}/snapshots/${DATA_SRC}/
 	@cp -R op/${DATA_SRC}/snapshot/*.sql ${DBT_PROJECT_NAME}/snapshots/${DATA_SRC}
-	@echo "${COLOUR_TXT_FMT_OPENING}# Generate sql for the 'incremental' layer.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "${YELLOW}# Generate sql for the 'incremental' layer.${COLOUR_OFF}"
 	@echo "---------------------------------------------------------------"
 	@python3 py/gen_dbt_sql_objs.py incremental
 	@cp -R op/${DATA_SRC}/incremental/*.sql ${DBT_PROJECT_NAME}/models/staging/
 
 copy_dbt_project_to_af_dags_dir: get_ips
 	@echo "------------------------------------------------------------------------------------------"
-	@echo "${COLOUR_TXT_FMT_OPENING}Target 'demo'. For demo purposes only, copy over the the dbt project '${DBT_PROJECT_NAME}' to the Airflow DAGS repo and change required perms/copy required files.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "${YELLOW}Target 'demo'. For demo purposes only, copy over the the dbt project '${DBT_PROJECT_NAME}' to the Airflow DAGS repo and change required perms/copy required files.${COLOUR_OFF}"
 	@echo "------------------------------------------------------------------------------------------"
 	# copy over the dbt project to the Airflow DAGs repo.
 	# If a dbt project of the same name already exists in the AF dags repo, add a '_bkp' suffix to the dbt project in the AF dags repo
@@ -206,15 +210,15 @@ copy_dbt_project_to_af_dags_dir: get_ips
 #############################################################################################
 gen_sql_objs_for_restriced_and_landed_layers: get_ips
 	@echo "-------------------------------------------------------------------------------------------"
-	@echo "${COLOUR_TXT_FMT_OPENING}Target: 'gen_sql_objs_for_restriced_and_landed_layers'. Generate restricted/landed .sql files using Jinja templates.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "${YELLOW}Target: 'gen_sql_objs_for_restriced_and_landed_layers'. Generate restricted/landed .sql files using Jinja templates.${COLOUR_OFF}"
 	@echo "-------------------------------------------------------------------------------------------"
-	@echo "${COLOUR_TXT_FMT_OPENING}# Generate sql for the 'restricted' layer.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "${YELLOW}# Generate sql for the 'restricted' layer.${COLOUR_OFF}"
 	@echo "---------------------------------------------------------------"
 	@ rm -rf op/${DATA_SRC}/landed/
 	@ rm -rf op/${DATA_SRC}/restricted/
 	@python3 py/gen_dbt_sql_objs.py restricted
 	@echo "---------------------------------------------------------------"
-	@echo "${COLOUR_TXT_FMT_OPENING}# Generate sql for the 'landed' layer.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "${YELLOW}# Generate sql for the 'landed' layer.${COLOUR_OFF}"
 	@echo "---------------------------------------------------------------"
 	@python3 py/gen_dbt_sql_objs.py landed
 
@@ -223,7 +227,7 @@ gen_sql_objs_for_restriced_and_landed_layers: get_ips
 #############################################################################################
 get_ips:
 	@echo "------------------------------------------------------------------"
-	@echo "${COLOUR_TXT_FMT_OPENING}Target: 'get_ips'. Get input args from config.yaml.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "${YELLOW}Target: 'get_ips'. Get input args from config.yaml.${COLOUR_OFF}"
 	@echo "------------------------------------------------------------------"
 	@# general params
 	$(eval ENV=$(shell yq -r '.general_params.env | select( . != null )' ${CONFIG_FILE}))
@@ -246,7 +250,7 @@ get_ips:
 
 validate_user_ip: get_ips
 	@echo "------------------------------------------------------------------"
-	@echo "${COLOUR_TXT_FMT_OPENING}Target: 'validate_user_ip'. Validate the user inputs.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "${YELLOW}Target: 'validate_user_ip'. Validate the user inputs.${COLOUR_OFF}"
 	@echo "------------------------------------------------------------------"
 	# INFO: 1) Verify the user has provided a value for the key 'data_src' in ip/config.yaml
 	@[ "${DATA_SRC}" ] || ( echo -e "\nError: 'data_src' key is empty in ip/config.yaml\n"; exit 1 )
